@@ -1,0 +1,202 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Parahuman Clicker</title>
+
+<script src="https://code.jquery.com/jquery-1.12.3.min.js" type="text/javascript"></script>
+
+<script>
+var shards = 0;
+var conflict = 0;
+var parahumans = 0;
+
+$( document ).ready(function() {
+	$( ".shard_container" ).click(function() {
+		shards++;
+		update_shards();
+	});
+	
+	
+	$( "#create1" ).click(function() {
+		if (shards >= 100) {
+			shards = shards - 100;
+			update_shards();
+			create_parahuman(parahumans);
+		}
+	});
+	
+	update_shards();
+	update_conflict();
+});
+
+function update_shards(){
+	$('.num_shards').text(shards);
+	update_spawn();	
+}
+
+function update_conflict(){
+	$('.num_conflict').text(conflict);
+}
+
+function update_spawn(){
+		if (shards >= 100) {
+			$('#overlay').removeClass().addClass('overlay2');
+		}
+		if (shards < 100 ){
+				$('#overlay').removeClass().addClass('overlay1');
+		}
+		
+}
+
+function create_parahuman(id){
+	parahumans++;
+	var shardvalue = 200;
+	var timer = 20;
+	var minutes = Math.floor(timer / 60);
+	var seconds = timer-(minutes * 60);
+	$( "#parahuman_container" ).append( '<div id="parahuman" class="parahuman'+id+'"><div id="protrait"><img src="images/face1.png" /></div><div id="stats"><p>Name: Bob<br>Power level: 100<br>Type: Striker<br>Conflict per second: 2<br>Shards upon death: '+shardvalue+'</p></div><div id="life"><p>Lifespan: <span id="timer'+id+'">'+minutes+':'+seconds+'</span></p></div></div>' );
+	var countdown = setInterval(frame, 1000);
+	function frame() {
+		if (seconds == 0)
+		{
+			if (minutes == 0)
+			{
+				clearInterval(countdown);
+				kill_parahuman(id,shardvalue);
+			}else{
+				minutes--
+				seconds = 60;	
+			}
+		}
+		if (seconds == 0 && minutes ==0){}else{
+		conflict = conflict + 2;
+		update_conflict();
+		}
+		seconds--
+		if (seconds < 10){
+			var lead=0	
+		}else{
+			var lead="";	
+		}
+		$( "#timer"+id ).text(minutes+':'+lead+seconds);
+	}
+	
+}
+
+function kill_parahuman(id,gainshards){
+	shards = shards+gainshards;
+	update_shards();
+	$( ".parahuman"+id ).remove();
+}
+</script>
+
+<style>
+.left{
+	float:left;	
+	width:50%;
+}
+.left h3{
+text-align:center;	
+}
+.right{
+	float:left;
+	width:50%;
+}
+.shard_container{
+	margin: 0 auto;	
+	width:50%;
+	cursor:pointer;
+}
+.shard_container img{
+	width:100%;	
+}
+#container{
+	width: 600px;
+	margin:0 auto;	
+}
+
+#container h1{
+text-align:center;	
+}
+
+.cost{
+margin-left:20px;
+
+}
+
+.button{
+	border:3px solid black;
+	height:60px;
+	line-height:60px;
+	text-align:center;
+	font-size: 21px;	
+	cursor: pointer;
+}
+.title{
+	height: 60px;
+    line-height: 60px;	
+}
+
+.overlay1{
+	background-color: rgba(39,62,84,0.52);
+    z-index: 2;
+    color: gray;
+    width: 100%;
+    height: 100%;
+    opacity: 0.5;
+    float: left;
+}
+
+#parahuman_container{
+	border: 3px solid black;
+    padding: 20px;	
+}
+
+#parahuman{
+	display: inline-block; font-size: 20px; width: 100%; border-bottom: 1px solid black;	
+}
+
+#protrait{
+	float:left;
+}
+
+#stats{
+	float:left;	
+}
+
+#stats p {
+	margin-top:0; margin-left:20px;	
+}
+
+#life{
+	float:right;	
+}
+</style>
+
+</head>
+
+<body>
+
+	<div id="container">
+    	<h1>Parahuman Clicker</h1>
+		<div class="left">
+        	<h3>Shards: <span class="num_shards"></span></h3>
+            <div class="shard_container"><img src="images/shard.png" /></div>
+        </div>
+        <div class="right">
+        	<h3>Conflict: <span class="num_conflict"></span></h3>
+            <div id="create1" class="button">
+            	<div id="overlay" class="overlay1">
+                	<div class="title">Create Parahuman <span class="cost">100 </span><img src="images/shard_icon.png" /></div>
+            	</div>
+            </div>
+            
+        </div>
+        <div style="clear:both;"></div>
+        <div id="parahuman_container">
+        	
+        </div>
+	</div>
+</body>
+</html>
