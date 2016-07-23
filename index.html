@@ -51,11 +51,10 @@ function update_spawn(){
 
 function create_parahuman(id){
 	parahumans++;
-	var shardvalue = 200;
 	var timer = 20;
 	var minutes = Math.floor(timer / 60);
 	var seconds = timer-(minutes * 60);
-	$( "#parahuman_container" ).append( '<div id="parahuman" class="parahuman'+id+'"><div id="protrait"><img src="images/face1.png" /></div><div id="stats"><p>Name: Bob<br>Power level: 100<br>Type: Striker<br>Conflict per second: 2<br>Shards upon death: '+shardvalue+'</p></div><div id="life"><p>Lifespan: <span id="timer'+id+'">'+minutes+':'+seconds+'</span></p></div></div>' );
+	$( "#parahuman_container" ).append( '<div id="parahuman" class="parahuman'+id+'"><div id="protrait"><img src="images/face1.png" /></div><div id="stats"><p>Name: Bob<br>Power level: 100<br>Type: Striker<br>Conflict per second: 2</p></div><div id="life"><p>Lifespan: <span id="timer'+id+'">'+minutes+':'+seconds+'</span></p></div></div>' );
 	var countdown = setInterval(frame, 1000);
 	function frame() {
 		if (seconds == 0)
@@ -63,7 +62,7 @@ function create_parahuman(id){
 			if (minutes == 0)
 			{
 				clearInterval(countdown);
-				kill_parahuman(id,shardvalue);
+				kill_parahuman(id);
 			}else{
 				minutes--
 				seconds = 60;	
@@ -84,9 +83,7 @@ function create_parahuman(id){
 	
 }
 
-function kill_parahuman(id,gainshards){
-	shards = shards+gainshards;
-	update_shards();
+function kill_parahuman(id){
 	$( ".parahuman"+id ).remove();
 }
 </script>
