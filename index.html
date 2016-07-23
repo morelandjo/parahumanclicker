@@ -13,6 +13,7 @@ var parahumans = 0;
 var living_parahumans = [];
 var classes = ["Mover","Shaker","Brute","Blaster","Breaker","Master","Tinker","Thinker","Striker","Changer","Trump","Stranger"];
 var class_created = [0,0,0,0,0,0,0,0,0,0,0,0];
+var cost = 0;
 
 $( document ).ready(function() {
 	$( ".shard_container" ).click(function() {
@@ -20,20 +21,38 @@ $( document ).ready(function() {
 		update_shards();
 	});
 	
-	
-	$( ".button" ).click(function() {
-		if (shards >= 100) {
-			shards = shards - 100;
+	$( ".button" ).mouseup(function() {
+    	var element = $(this).find(".cost");
+    	$(element).text("100")
+    	if (shards >= cost) {
+			shards = shards - cost;
 			update_shards();
 			if ($(this).attr("id") == "create1"){
-				y = 'random';
+				var y = 'random';
 			}else{
 
-				y = $(this).attr("id").replace("classno", "");
+				var y = $(this).attr("id").replace("classno", "");
 			}
 
-			create_parahuman(parahumans,y);
+			create_parahuman(parahumans,y,cost);
 		}
+    })
+  	.mousedown(function() {
+    	cost = $(this).find(".cost").text();
+    	var element = $(this).find(".cost");
+	
+		timeout = setInterval(function(){
+        	if (cost < shards){
+        		cost++
+        		$(element).text(cost)
+        	}
+    	}, 100);
+	
+  	});
+
+  	$(document).mouseup(function(){
+    	clearInterval(timeout);
+    	return false;
 	});
 	
 	update_shards();
@@ -41,6 +60,7 @@ $( document ).ready(function() {
 
 	var global_clock = setInterval(time, 1000);
 });
+
 
 function update_shards(){
 	$('.num_shards').text(shards);
@@ -63,7 +83,7 @@ function update_spawn(){
 		
 }
 
-function create_parahuman(id,class_check){
+function create_parahuman(id,class_check,power){
 	parahumans++;
 	living_parahumans.push(id);
 	if (class_check == "random"){
@@ -78,7 +98,7 @@ function create_parahuman(id,class_check){
 	var cd = 0;
 	var minutes = Math.floor(timer / 60);
 	var seconds = timer-(minutes * 60);
-	$( "#parahuman_container" ).append( '<div id="parahuman" class="parahuman'+id+'"><div id="protrait"><img src="images/face1.png" /></div><div id="stats"><p>Name: Bob<br>Power level: 100<br>Type: '+thisclass+'<br>Conflict per second: 2</p></div><div id="life"><p>Lifespan: <span id="timer'+id+'">'+minutes+':'+seconds+'</span></p></div></div>' );
+	$( "#parahuman_container" ).append( '<div id="parahuman" class="parahuman'+id+'"><div id="protrait"><img src="images/face1.png" /></div><div id="stats"><p>Name: Bob<br>Power level: '+power+'<br>Type: '+thisclass+'<br>Conflict per second: 2</p></div><div id="life"><p>Lifespan: <span id="timer'+id+'">'+minutes+':'+seconds+'</span></p></div></div>' );
 	var countdown = setInterval(frame, 1000);
 	function frame() {
 		
