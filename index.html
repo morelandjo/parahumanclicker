@@ -28,6 +28,8 @@ $( document ).ready(function() {
 	
 	update_shards();
 	update_conflict();
+
+	var global_clock = setInterval(time, 1000);
 });
 
 function update_shards(){
@@ -52,11 +54,23 @@ function update_spawn(){
 function create_parahuman(id){
 	parahumans++;
 	var timer = 20;
+	var cd = 0;
 	var minutes = Math.floor(timer / 60);
 	var seconds = timer-(minutes * 60);
 	$( "#parahuman_container" ).append( '<div id="parahuman" class="parahuman'+id+'"><div id="protrait"><img src="images/face1.png" /></div><div id="stats"><p>Name: Bob<br>Power level: 100<br>Type: Striker<br>Conflict per second: 2</p></div><div id="life"><p>Lifespan: <span id="timer'+id+'">'+minutes+':'+seconds+'</span></p></div></div>' );
 	var countdown = setInterval(frame, 1000);
 	function frame() {
+		
+		if(events == 1 && id == targets && cd == 0){
+			//do something eventful
+			//minutes = minutes + 5;
+			//console.log("event");
+			cd = 1;
+		}
+		if(cd==1 && events==0){
+			cd = 0;
+		}
+
 		if (seconds == 0)
 		{
 			if (minutes == 0)
@@ -85,6 +99,30 @@ function create_parahuman(id){
 
 function kill_parahuman(id){
 	$( ".parahuman"+id ).remove();
+}
+
+function time(){
+	//console.log("tick");
+	event_system();
+}
+var tick = 0;
+var events = 0;
+var targets = 0;
+function event_system(){
+	var roll = Math.floor((Math.random() * 10) + 1);
+	if (roll == 1 && tick == 0){
+		tick = 20;
+		events = 1;
+		targets = Math.floor((Math.random() * parahumans));
+		console.log(targets);
+	}
+	if (tick > 0){
+		tick--;
+	}
+	if(tick == 0){
+		events = 0;
+	}
+
 }
 </script>
 
