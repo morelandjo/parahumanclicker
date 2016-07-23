@@ -11,6 +11,8 @@ var shards = 200;
 var conflict = 0;
 var parahumans = 0;
 var living_parahumans = [];
+var classes = ["Mover","Shaker","Brute","Blaster","Breaker","Master","Tinker","Thinker","Striker","Changer","Trump","Stranger"];
+var class_created = [0,0,0,0,0,0,0,0,0,0,0,0];
 
 $( document ).ready(function() {
 	$( ".shard_container" ).click(function() {
@@ -19,11 +21,18 @@ $( document ).ready(function() {
 	});
 	
 	
-	$( "#create1" ).click(function() {
+	$( ".button" ).click(function() {
 		if (shards >= 100) {
 			shards = shards - 100;
 			update_shards();
-			create_parahuman(parahumans);
+			if ($(this).attr("id") == "create1"){
+				y = 'random';
+			}else{
+
+				y = $(this).attr("id").replace("classno", "");
+			}
+
+			create_parahuman(parahumans,y);
 		}
 	});
 	
@@ -44,22 +53,32 @@ function update_conflict(){
 
 function update_spawn(){
 		if (shards >= 100) {
-			$('#overlay').removeClass().addClass('overlay2');
+			$( ".overlay" ).each(function( i ) {
+				$(this).removeClass('overlay1').addClass('overlay2');
+			});
 		}
 		if (shards < 100 ){
-				$('#overlay').removeClass().addClass('overlay1');
+				$('.overlay').removeClass('overlay2').addClass('overlay1');
 		}
 		
 }
 
-function create_parahuman(id){
+function create_parahuman(id,class_check){
 	parahumans++;
 	living_parahumans.push(id);
+	if (class_check == "random"){
+		var thisclass = Math.floor((Math.random() * classes.length));
+	}else{
+		var thisclass = class_check;
+	}
+	class_created[thisclass] = 1;
+	thisclass = classes[thisclass];
+	check_classes();
 	var timer = 20;
 	var cd = 0;
 	var minutes = Math.floor(timer / 60);
 	var seconds = timer-(minutes * 60);
-	$( "#parahuman_container" ).append( '<div id="parahuman" class="parahuman'+id+'"><div id="protrait"><img src="images/face1.png" /></div><div id="stats"><p>Name: Bob<br>Power level: 100<br>Type: Striker<br>Conflict per second: 2</p></div><div id="life"><p>Lifespan: <span id="timer'+id+'">'+minutes+':'+seconds+'</span></p></div></div>' );
+	$( "#parahuman_container" ).append( '<div id="parahuman" class="parahuman'+id+'"><div id="protrait"><img src="images/face1.png" /></div><div id="stats"><p>Name: Bob<br>Power level: 100<br>Type: '+thisclass+'<br>Conflict per second: 2</p></div><div id="life"><p>Lifespan: <span id="timer'+id+'">'+minutes+':'+seconds+'</span></p></div></div>' );
 	var countdown = setInterval(frame, 1000);
 	function frame() {
 		
@@ -118,7 +137,7 @@ function event_system(){
 		tick = 20;
 		events = 1;
 		targets = Math.floor((Math.random() * living_parahumans.length));
-		
+
 	}
 	if (tick > 0){
 		tick--;
@@ -127,6 +146,14 @@ function event_system(){
 		events = 0;
 	}
 
+}
+
+function check_classes(){
+	for (var i = 0; i < class_created.length; i++) {
+    	if (class_created[i] == 1){
+    		$("#classno"+i).show(2000);
+    	}
+	}	
 }
 </script>
 
@@ -211,6 +238,9 @@ margin-left:20px;
 #life{
 	float:right;	
 }
+.secondary{
+	display:none;
+}
 </style>
 
 </head>
@@ -226,10 +256,71 @@ margin-left:20px;
         <div class="right">
         	<h3>Conflict: <span class="num_conflict"></span></h3>
             <div id="create1" class="button">
-            	<div id="overlay" class="overlay1">
+            	<div class="overlay overlay1">
                 	<div class="title">Create Parahuman <span class="cost">100 </span><img src="images/shard_icon.png" /></div>
             	</div>
             </div>
+            <div id="classno0" class="button secondary">
+            	<div class="overlay overlay1">
+                	<div class="title">Create Mover <span class="cost">100 </span><img src="images/shard_icon.png" /></div>
+            	</div>
+            </div>
+            <div id="classno1" class="button secondary">
+            	<div class="overlay overlay1">
+                	<div class="title">Create Shaker <span class="cost">100 </span><img src="images/shard_icon.png" /></div>
+            	</div>
+            </div>
+            <div id="classno2" class="button secondary">
+            	<div class="overlay overlay1">
+                	<div class="title">Create Brute <span class="cost">100 </span><img src="images/shard_icon.png" /></div>
+            	</div>
+            </div>
+            <div id="classno3" class="button secondary">
+            	<div class="overlay overlay1">
+                	<div class="title">Create Blaster <span class="cost">100 </span><img src="images/shard_icon.png" /></div>
+            	</div>
+            </div>
+            <div id="classno4" class="button secondary">
+            	<div class="overlay overlay1">
+                	<div class="title">Create Breaker <span class="cost">100 </span><img src="images/shard_icon.png" /></div>
+            	</div>
+            </div>
+            <div id="classno5" class="button secondary">
+            	<div class="overlay overlay1">
+                	<div class="title">Create Master <span class="cost">100 </span><img src="images/shard_icon.png" /></div>
+            	</div>
+            </div>
+            <div id="classno6" class="button secondary">
+            	<div class="overlay overlay1">
+                	<div class="title">Create Tinker <span class="cost">100 </span><img src="images/shard_icon.png" /></div>
+            	</div>
+            </div>
+            <div id="classno7" class="button secondary">
+            	<div class="overlay overlay1">
+                	<div class="title">Create Thinker <span class="cost">100 </span><img src="images/shard_icon.png" /></div>
+            	</div>
+            </div>
+            <div id="classno8" class="button secondary">
+            	<div class="overlay overlay1">
+                	<div class="title">Create Striker <span class="cost">100 </span><img src="images/shard_icon.png" /></div>
+            	</div>
+            </div>
+            <div id="classno9" class="button secondary">
+            	<div class="overlay overlay1">
+                	<div class="title">Create Changer <span class="cost">100 </span><img src="images/shard_icon.png" /></div>
+            	</div>
+            </div>
+            <div id="classno10" class="button secondary">
+            	<div class="overlay overlay1">
+                	<div class="title">Create Trump <span class="cost">100 </span><img src="images/shard_icon.png" /></div>
+            	</div>
+            </div>
+            <div id="classno11" class="button secondary">
+            	<div class="overlay overlay1">
+                	<div class="title">Create Stranger <span class="cost">100 </span><img src="images/shard_icon.png" /></div>
+            	</div>
+            </div>
+
             
         </div>
         <div style="clear:both;"></div>
