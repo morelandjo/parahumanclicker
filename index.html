@@ -12,14 +12,15 @@
 <script src="names.js"></script>
 
 <script>
-var shards = 0;
-var conflict = 0;
+var shards = 500;
+var conflict = 100;
 var parahumans = 0;
 var living_parahumans = [];
 var classes = ["Mover","Shaker","Brute","Blaster","Breaker","Master","Tinker","Thinker","Striker","Changer","Trump","Stranger"];
 var class_created = [0,0,0,0,0,0,0,0,0,0,0,0];
 var cost = 0;
 var warrior = 0;
+var harvester = 0;
 
 $( document ).ready(function() {
 	$( ".shard_container" ).click(function() {
@@ -29,6 +30,10 @@ $( document ).ready(function() {
 
 	$( "#warrior .plus_btn" ).click(function() {
 		warrior_skill()
+	});
+	
+	$( "#harvester .plus_btn" ).click(function() {
+		harvester_skill()
 	});
 	
 	$( ".button" ).mouseup(function() {
@@ -93,7 +98,17 @@ $( document ).ready(function() {
   		content: "The warrior trait unlocks after 100 conflict.",
   		track:true
 	});
+	
+	$( "#harvester" ).tooltip({
+  		content: "The harvester trait unlocks after 200 conflict.",
+  		track:true
+	});
 
+	$( "#harvester .plus_btn" ).tooltip({
+  		content: "<p>The Harvester skill increases the shards returned when a prahuman dies</p><p>Next Level: </p><p>Cost: 200 shards<br>Effect: +2% shards on death</p>",
+  		track:true
+	});
+	
 	$( "#warrior .plus_btn" ).tooltip({
   		content: "<p>The Warrior skill increases conflict automatically</p><p>Next Level: </p><p>Cost: 100 shards<br>Effect: +5 conflict per second</p>",
   		track:true
@@ -123,6 +138,14 @@ function update_conflict(){
 		}
 		
 	}
+	if (conflict >= 200) {
+		$("#harvester").removeClass('unavailable').addClass('available');
+		if ($('#harvester').tooltip()){
+			$('#harvester').tooltip("destroy");
+		}
+		
+	}
+	
 }
 
 function update_spawn(){
@@ -152,7 +175,7 @@ function create_parahuman(id,class_check,power){
 	var cd = 0;
 	//var minutes = Math.floor(timer / 60);
 	//var seconds = timer-(minutes * 60);
-	$( "#parahuman_container" ).append( '<div id="parahuman" class="parahuman'+id+'"><div id="protrait"><img src="images/face1.png" /></div><div id="stats"><p>Name: '+name_generate()+'<br>Power level: '+power+'<br>Type: '+thisclass+'<br>Conflict per second: 2<br>Shards upon death: '+power+'</p></p></div><div id="life"><p>HP: <span id="timer'+id+'">'+timer+'</span><div id="progressbar'+id+'""></div></p></div></div>' );
+	$( "#parahuman_container" ).append( '<div id="parahuman" class="parahuman'+id+'"><div id="protrait"><img src="images/face1.png" /></div><div id="stats"><p>Name: '+name_generate()+'<br>Power level: '+power+'<br>Type: '+thisclass+'<br>Conflict per second: 2<br>Shards upon death: <span id="sharddeath'+id+'"></span></p></p></div><div id="life"><p>HP: <span id="timer'+id+'">'+timer+'</span><div id="progressbar'+id+'""></div></p></div></div>' );
 	var countdown = setInterval(frame, 1000);
 	function frame() {
 		
@@ -169,7 +192,7 @@ function create_parahuman(id,class_check,power){
 		if (timer == 0){
 		
 			clearInterval(countdown);
-			kill_parahuman(id,power);
+			kill_parahuman(id,Number(power)+(Number(power)*(harvester*.02)));
 		}
 		if (timer == 0){}else{
 		conflict = conflict + 2;
@@ -183,6 +206,7 @@ function create_parahuman(id,class_check,power){
   		} );
 		
 		$( "#timer"+id ).text(timer);
+		$( "#sharddeath"+id ).text(Number(power)+(Number(power)*(harvester*.02)));
 	}
 	
 }
@@ -246,6 +270,23 @@ function warrior_skill(){
 	});
 	}
 }
+
+function harvester_skill(){
+	if (shards >= (harvester+1)*200){
+		//console.log("fire");
+		shards = shards - (warrior+1)*200;
+		update_shards();
+		harvester++;
+		$( "#harvester_lvl" ).text( harvester );
+		$('#harvester .plus_btn').tooltip("destroy");
+		$( "#harvester .plus_btn" ).tooltip({
+  		content: "<p>The Harvester skill increases the shards returned when a prahuman dies</p><p>Current level: +"+harvester*2+"% shards returned on parahuman death</p><p>Next Level: </p><p>Cost: "+(harvester+1)*200+" shards<br>Effect: +"+(harvester+1)*2+"% shards returned on parahuman death</p>",
+  		track:true
+	});
+	}
+}
+
+
 
 String.prototype.capitalize = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
@@ -530,6 +571,15 @@ cursor:pointer;
 			<div style="text-align: center; width: 280px; margin: 0 auto; padding: 10px 0px; border: 1px solid black;">
 				<i class="fa fa-shield fa-2x" aria-hidden="true"></i>
 				<div style="vertical-align: super; padding-left: 10px; display: inline-block;">Warrior | level <span id="warrior_lvl">0</span>
+					<span class="plus_btn">+</span>
+				</div>
+			</div>
+		</div>
+        <div style="margin:20px;"></div>
+        <div id="harvester" class="unavailable" title="1">
+			<div style="text-align: center; width: 280px; margin: 0 auto; padding: 10px 0px; border: 1px solid black;">
+				<i class="fa fa-diamond fa-2x" aria-hidden="true"></i>
+				<div style="vertical-align: super; padding-left: 10px; display: inline-block;">Harvester | level <span id="harvester_lvl">0</span>
 					<span class="plus_btn">+</span>
 				</div>
 			</div>
