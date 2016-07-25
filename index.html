@@ -12,8 +12,8 @@
 <script src="names.js"></script>
 
 <script>
-var shards = 500;
-var conflict = 300;
+var shards = 0;
+var conflict = 0;
 var parahumans = 0;
 var living_parahumans = [];
 var classes = ["Mover","Shaker","Brute","Blaster","Breaker","Master","Tinker","Thinker","Striker","Changer","Trump","Stranger"];
@@ -58,15 +58,18 @@ $( document ).ready(function() {
 		}
     })
   	.mousedown(function() {
-    	cost = $(this).find(".cost").text();
-    	var element = $(this).find(".cost");
-	
-		timeout = setInterval(function(){
-        	if (cost < shards){
-        		cost++
-        		$(element).text(cost)
-        	}
-    	}, 100);
+    	
+			cost = $(this).find(".cost").text();
+    		var element = $(this).find(".cost");
+	timeout = window.setTimeout(function () {
+			timeout = setInterval(function(){
+        		if (cost < shards){
+        			cost++
+        			$(element).text(cost)
+        		}
+    		}, 100);
+	}, 400);
+		
 	
   	});
 
