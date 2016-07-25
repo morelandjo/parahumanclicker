@@ -12,7 +12,7 @@
 <script src="names.js"></script>
 
 <script>
-var shards = 0;
+var shards = 300;
 var conflict = 0;
 var parahumans = 0;
 var living_parahumans = [];
@@ -202,7 +202,7 @@ function create_parahuman(id,class_check,power){
 	var cd = 0;
 	//var minutes = Math.floor(timer / 60);
 	//var seconds = timer-(minutes * 60);
-	$( "#parahuman_container" ).append( '<div id="parahuman" class="parahuman'+id+'"><div id="protrait"><img src="images/face1.png" /></div><div id="stats"><p>Name: '+name_generate()+'<br>Power level: '+power+'<br>Type: '+thisclass+'<br>Conflict per second: 2<br>Shards upon death: <span id="sharddeath'+id+'"></span></p></p></div><div id="life"><p>HP: <span id="timer'+id+'">'+timer+'</span><div id="progressbar'+id+'""></div></p></div></div>' );
+	$( "#parahuman_container" ).append( '<div id="parahuman" class="parahuman'+id+'"><div id="protrait"><img class="pimage'+id+'" src="images/face1.png" /></div><div id="stats"><p>Name: '+name_generate()+'<br>Power level: '+power+'<br>Type: '+thisclass+'<br>Conflict per second: 2<br>Shards upon death: <span id="sharddeath'+id+'"></span></p></p></div><div id="life"><p>HP: <span id="timer'+id+'">'+timer+'</span><div id="progressbar'+id+'""></div></p></div></div>' );
 	var countdown = setInterval(frame, 1000);
 	function frame() {
 		//console.log(events+" "+targets+" "+cd);
@@ -257,7 +257,12 @@ function create_parahuman(id,class_check,power){
 }
 
 function kill_parahuman(id,gainshards){
-	$( ".parahuman"+id ).remove();
+	$(".pimage"+id).attr("src","images/dead.jpg");
+	$(".parahuman"+id).animate({backgroundColor: '#000000'}, 5000);
+	timeout = window.setTimeout(function () {
+		$( ".parahuman"+id ).remove();
+	}, 5000);
+	//$( ".parahuman"+id ).remove();
 	shards = shards+Number(gainshards);
 	update_shards();
 	living_parahumans.splice( $.inArray(id, living_parahumans), 1 );
