@@ -9,30 +9,10 @@ var posttitles =["Man", "Woman", "Dude", "Mistress", "Master", "Girl", "Kid", "B
 //case 2: name = noun(mainElement); if (randomizer.nextBoolean()) {name = "The " + name; }
 //case 3: name = (String)pretitles.get(randomizer.nextInt(pretitles.size())) + " " + noun(mainElement);
 //case 4: name = "The " + noun(mainElement) + " " + (String)posttitles.get(randomizer.nextInt(pretitles.size()));
-// case 7: name = add_er(verb(mainElement));
 //case 8: if (randomizer.nextBoolean()) {name = verb(mainElement) + noun(secondaryElement).toLowerCase();} else { name = verb(secondaryElement) + noun(mainElement).toLowerCase();}
 //case 9: name = adj(secondaryElement) + " " + noun(mainElement);
 // case 10: name = adj(mainElement);if (randomizer.nextBoolean()) {name = name + " " + (String)posttitles.get(randomizer.nextInt(posttitles.size()));}
 //case 11: name = noun(mainElement) + " the " + adj(secondaryElement);
 
-//static int[] elementChances = { 4, 4, 4, 4, 3, 4, 4, 2, 2, 2, 4, 4, 5, 10, 6, 9, 5, 9, 4, 5, 4, 6, 5, 3, 3, 3, 5, 5, 4, 4, 7, 5 };
+//static int[] elementChances = { 4, 4, 4, 4, 3, 4, 4, 2, 2, 2, 4, 4, 5, 10, 6, 9, 5, 9, 4, 5, 4, 6, 5, 3, 3, 3, 5, 5, 4, 4, 5 };
 
-public static String add_er(String str)
-  {
-    int lng = str.length();
-    List<Character> vowels = Arrays.asList(new Character[] { Character.valueOf('a'), Character.valueOf('e'), Character.valueOf('i'), Character.valueOf('o'), Character.valueOf('u'), Character.valueOf('w') });
-    switch (str.charAt(lng - 1))
-    {
-    case 'y': 
-      if (!vowels.contains(Character.valueOf(str.charAt(lng - 2)))) {
-        return str.substring(0, lng - 1) + "ier";
-      }
-      break;
-    case 'e': 
-      return str + "r";
-    }
-    if ((str.charAt(lng - 2) != 'w') && (str.charAt(lng - 2) != 'r') && (vowels.contains(Character.valueOf(str.charAt(lng - 2)))) && (!vowels.contains(Character.valueOf(str.charAt(lng - 1)))) && (!vowels.contains(Character.valueOf(str.charAt(lng - 3))))) {
-      return str + str.charAt(lng - 1) + "er";
-    }
-    return str + "er";
-  }

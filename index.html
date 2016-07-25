@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+<script src="names.js"></script>
 
 <script>
 var shards = 0;
@@ -150,7 +151,7 @@ function create_parahuman(id,class_check,power){
 	var cd = 0;
 	//var minutes = Math.floor(timer / 60);
 	//var seconds = timer-(minutes * 60);
-	$( "#parahuman_container" ).append( '<div id="parahuman" class="parahuman'+id+'"><div id="protrait"><img src="images/face1.png" /></div><div id="stats"><p>Name: Bob<br>Power level: '+power+'<br>Type: '+thisclass+'<br>Conflict per second: 2<br>Shards upon death: '+power+'</p></p></div><div id="life"><p>HP: <span id="timer'+id+'">'+timer+'</span><div id="progressbar'+id+'""></div></p></div></div>' );
+	$( "#parahuman_container" ).append( '<div id="parahuman" class="parahuman'+id+'"><div id="protrait"><img src="images/face1.png" /></div><div id="stats"><p>Name: '+name_generate()+'<br>Power level: '+power+'<br>Type: '+thisclass+'<br>Conflict per second: 2<br>Shards upon death: '+power+'</p></p></div><div id="life"><p>HP: <span id="timer'+id+'">'+timer+'</span><div id="progressbar'+id+'""></div></p></div></div>' );
 	var countdown = setInterval(frame, 1000);
 	function frame() {
 		
@@ -243,6 +244,54 @@ function warrior_skill(){
   		track:true
 	});
 	}
+}
+
+String.prototype.capitalize = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+}
+
+function name_generate() {
+	var namechance = [4, 4, 4, 4, 3, 4, 4, 2, 2, 2, 4, 4, 5, 10, 6, 9, 5, 9, 4, 5, 4, 6, 5, 3, 3, 3, 5, 5, 4, 4, 5, 11]; 
+	var name;
+		switch(namechance[Math.floor(Math.random() * namechance.length)]) {
+    		case 6:
+        		name = nouns[Math.floor(Math.random() * nouns.length)].capitalize() + " " + nouns[Math.floor(Math.random() * nouns.length)].capitalize();
+				return name;
+        		break;
+    		case 5:
+        		name = nouns[Math.floor(Math.random() * nouns.length)].capitalize() + nouns[Math.floor(Math.random() * nouns.length)];
+				return name;
+        		break;
+			case 2:
+        		name = "The "+nouns[Math.floor(Math.random() * nouns.length)].capitalize();
+				return name;
+        		break;
+			case 3:
+        		name = pretitles[Math.floor(Math.random() * pretitles.length)] + " " + nouns[Math.floor(Math.random() * nouns.length)].capitalize();
+				return name;
+        		break;
+			case 4:
+        		name = "The "+nouns[Math.floor(Math.random() * nouns.length)].capitalize() + " " + posttitles[Math.floor(Math.random() * posttitles.length)].capitalize();
+				return name;
+        		break;
+			case 8:
+        		name = verbs[Math.floor(Math.random() * verbs.length)].capitalize() + nouns[Math.floor(Math.random() * nouns.length)];
+				return name;
+        		break;
+			case 9:
+        		name = adjectives[Math.floor(Math.random() * adjectives.length)].capitalize() + nouns[Math.floor(Math.random() * nouns.length)];
+				return name;
+        		break;
+			case 10:
+        		name = adjectives[Math.floor(Math.random() * adjectives.length)].capitalize() + " " + posttitles[Math.floor(Math.random() * posttitles.length)];
+				return name;
+        		break;
+			case 11:
+        		name = nouns[Math.floor(Math.random() * nouns.length)].capitalize() + " the " + adjectives[Math.floor(Math.random() * adjectives.length)].capitalize();
+				return name;
+        		break;
+			
+		}
 }
 
 </script>
