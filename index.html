@@ -13,7 +13,7 @@
 
 <script>
 var shards = 500;
-var conflict = 100;
+var conflict = 300;
 var parahumans = 0;
 var living_parahumans = [];
 var classes = ["Mover","Shaker","Brute","Blaster","Breaker","Master","Tinker","Thinker","Striker","Changer","Trump","Stranger"];
@@ -21,6 +21,7 @@ var class_created = [0,0,0,0,0,0,0,0,0,0,0,0];
 var cost = 0;
 var warrior = 0;
 var harvester = 0;
+var gardener = 0;
 
 $( document ).ready(function() {
 	$( ".shard_container" ).click(function() {
@@ -34,6 +35,10 @@ $( document ).ready(function() {
 	
 	$( "#harvester .plus_btn" ).click(function() {
 		harvester_skill()
+	});
+	
+	$( "#gardener .plus_btn" ).click(function() {
+		gardener_skill()
 	});
 	
 	$( ".button" ).mouseup(function() {
@@ -103,6 +108,11 @@ $( document ).ready(function() {
   		content: "The harvester trait unlocks after 200 conflict.",
   		track:true
 	});
+	
+	$( "#gardener" ).tooltip({
+  		content: "The gardener trait unlocks after 300 conflict.",
+  		track:true
+	});
 
 	$( "#harvester .plus_btn" ).tooltip({
   		content: "<p>The Harvester skill increases the shards returned when a prahuman dies</p><p>Next Level: </p><p>Cost: 200 shards<br>Effect: +2% shards on death</p>",
@@ -111,6 +121,11 @@ $( document ).ready(function() {
 	
 	$( "#warrior .plus_btn" ).tooltip({
   		content: "<p>The Warrior skill increases conflict automatically</p><p>Next Level: </p><p>Cost: 100 shards<br>Effect: +5 conflict per second</p>",
+  		track:true
+	});
+	
+	$( "#gardener .plus_btn" ).tooltip({
+  		content: "<p>The Gardener skill generates shards automatically</p><p>Next Level: </p><p>Cost: 300 shards<br>Effect: +10 shards per second</p>",
   		track:true
 	});
 	
@@ -142,6 +157,14 @@ function update_conflict(){
 		$("#harvester").removeClass('unavailable').addClass('available');
 		if ($('#harvester').tooltip()){
 			$('#harvester').tooltip("destroy");
+		}
+		
+	}
+	
+	if (conflict >= 300) {
+		$("#gardener").removeClass('unavailable').addClass('available');
+		if ($('#gardener').tooltip()){
+			$('#gardener').tooltip("destroy");
 		}
 		
 	}
@@ -227,6 +250,11 @@ function time(){
 		update_conflict();
 	}
 	
+	if (gardener > 0){
+		shards = shards + 10*gardener;
+		update_shards();	
+	}
+	
 }
 var tick = 0;
 var events = 0;
@@ -285,6 +313,22 @@ function harvester_skill(){
 	});
 	}
 }
+
+function gardener_skill(){
+	if (shards >= (gardener+1)*300){
+		//console.log("fire");
+		shards = shards - (gardener+1)*300;
+		update_shards();
+		gardener++;
+		$( "#gardener_lvl" ).text( gardener );
+		$('#gardener .plus_btn').tooltip("destroy");
+		$( "#gardener .plus_btn" ).tooltip({
+  		content: "<p>The Gardener skill generates shards automatically</p><p>Current level: +"+gardener*10+"% shards per second</p><p>Next Level: </p><p>Cost: "+(gardener+1)*300+" shards<br>Effect: +"+(gardener+1)*10+"% shards per second</p>",
+  		track:true
+	});
+	}
+}
+
 
 
 
@@ -580,6 +624,15 @@ cursor:pointer;
 			<div style="text-align: center; width: 280px; margin: 0 auto; padding: 10px 0px; border: 1px solid black;">
 				<i class="fa fa-diamond fa-2x" aria-hidden="true"></i>
 				<div style="vertical-align: super; padding-left: 10px; display: inline-block;">Harvester | level <span id="harvester_lvl">0</span>
+					<span class="plus_btn">+</span>
+				</div>
+			</div>
+		</div>
+        <div style="margin:20px;"></div>
+        <div id="gardener" class="unavailable" title="1">
+			<div style="text-align: center; width: 280px; margin: 0 auto; padding: 10px 0px; border: 1px solid black;">
+				<i class="fa fa-leaf fa-2x" aria-hidden="true"></i>
+				<div style="vertical-align: super; padding-left: 10px; display: inline-block;">Gardener | level <span id="gardener_lvl">0</span>
 					<span class="plus_btn">+</span>
 				</div>
 			</div>
