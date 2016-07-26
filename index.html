@@ -13,7 +13,7 @@
 <script src="names.js"></script>
 
 <script>
-var shards = 100;
+var shards = 200;
 var conflict = 0;
 var parahumans = 0;
 var living_parahumans = [];
@@ -514,10 +514,12 @@ function makecookie(){
 	var savestring=[];
 	var stattracker_convert;
 	//shards,conflict,class_created,warrior,harvester,gardener
+	//console.log(stattracker);
 	for (var key in stattracker) {
        var arr = stattracker[key];
-	   stattracker_convert = key+","+arr;
+	   stattracker_convert =stattracker_convert+","+key+","+arr;
     }
+	//console.log(stattracker_convert);
 	savestring.push(shards,conflict,class_created,warrior,harvester,gardener,living_parahumans.length,stattracker_convert);
 	
 	document.cookie = "save="+savestring;
