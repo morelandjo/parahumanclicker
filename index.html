@@ -495,7 +495,8 @@ function scroller(){
 function makecookie(){
 	var savestring=[];
 	//shards,conflict,class_created,warrior,harvester,gardener
-	savestring.push(shards,conflict,class_created,warrior,harvester,gardener,living_parahumans.length,stattracker);
+	
+	savestring.push(shards,conflict,class_created,warrior,harvester,gardener,living_parahumans.length,JSON.stringify(stattracker));
 	
 	//id,name,class,initial hp, current hp,power
 	//console.log(stattracker["id0"]);
