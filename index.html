@@ -490,6 +490,7 @@ function makecookie(){
 	var savestring=[];
 	//shards,conflict,class_created,warrior,harvester,gardener
 	savestring.push(shards,conflict,class_created,warrior,harvester,gardener);
+	console.log(savestring);
 	document.cookie = "save="+savestring;
 }
 
