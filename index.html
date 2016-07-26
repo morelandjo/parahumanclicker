@@ -533,7 +533,7 @@ function importcookie(){
 	if(getCookie("save")){
 		var stringval = getCookie("save");
 		var stringval = stringval.split(',');
-		//console.log (stringval);
+		console.log (stringval);
 		shards = Number(stringval[0]);
 		conflict = Number(stringval[1]);
 		class_created = [];
@@ -553,7 +553,7 @@ function importcookie(){
 			
 			create_parahuman(parahumans,hclass,power,name,initial_hp,current_hp);
 			stringval.splice(17, 6);
-			
+			console.log (stringval);
     		num_people--;
 		}
 	}
