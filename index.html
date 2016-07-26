@@ -519,7 +519,7 @@ function makecookie(){
 	   stattracker_convert = key+","+arr;
     }
 	savestring.push(shards,conflict,class_created,warrior,harvester,gardener,living_parahumans.length,stattracker_convert);
-	
+	console.log(savestring);
 	//id,name,class,initial hp, current hp,power
 	//console.log(stattracker["id0"]);
 	//console.log(savestring);
@@ -537,7 +537,7 @@ function importcookie(){
 		var stringval = getCookie("save");
 		var stringval = stringval.split(',');
 		console.log (stringval);
-		shards = stringval[0];
+		shards = Number(stringval[0]);
 		conflict = Number(stringval[1]);
 		class_created = [];
 		class_created.push(Number(stringval[2]),Number(stringval[3]),Number(stringval[4]),Number(stringval[5]),Number(stringval[6]),Number(stringval[7]),Number(stringval[8]),Number(stringval[9]),Number(stringval[10]),Number(stringval[11]),Number(stringval[12]),Number(stringval[13]));
