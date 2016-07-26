@@ -13,7 +13,7 @@
 <script src="names.js"></script>
 
 <script>
-var shards = 0;
+var shards = 300;
 var conflict = 0;
 var parahumans = 0;
 var living_parahumans = [];
@@ -251,7 +251,7 @@ function create_parahuman(id,class_check,power){
 		//timer--
 		$( function() {
     		$( "#progressbar"+id ).progressbar({
-      			value: timer
+      			value: (timer/initial_timer)*100
     		});
   		} );
 		
@@ -277,6 +277,7 @@ function time(){
 	//console.log(warrior);
 	scroller();
 	event_system();
+	makecookie();
 
 	if (warrior > 0){
 		conflict = conflict + 5*warrior;
@@ -469,7 +470,6 @@ function news_message(type,name){
 function scroller(){
 	//console.log("tick "+news.length+" "+live);
 	if(news.length > 0 && live == 0){
-		console.log(live);
 		live = 1;
 		$( "#ticker02" ).append("<li class='one' style='position: relative; list-style: none'>"+news[0]+"</li>");
 	
@@ -484,6 +484,26 @@ function scroller(){
 			live = 0;
   		});
 	}
+}
+
+function makecookie(){
+	var savestring=[];
+	//shards,conflict,classes_created,warrior,harvester,gardener
+	savestring.push(shards,conflict,classes_created,warrior,harvester,gardener);
+	document.cookie = "save="+savestring;
+	console.log(document.cookie);
+}
+
+function getCookie(name){
+    var re = new RegExp(name + "=([^;]+)");
+    var value = re.exec(document.cookie);
+    return (value != null) ? unescape(value[1]) : null;
+}
+
+function importcookie(){
+	
+	var stringval = getCookie("save");
+	console.log(stringval);
 }
 
 </script>
