@@ -13,7 +13,7 @@
 <script src="names.js"></script>
 
 <script>
-var shards = 0;
+var shards = 100;
 var conflict = 0;
 var parahumans = 0;
 var living_parahumans = [];
@@ -25,6 +25,7 @@ var harvester = 0;
 var gardener = 0;
 var news = [];
 var live = 0;
+var stattracker = [];
 
 $( document ).ready(function() {
 	$( ".shard_container" ).click(function() {
@@ -211,6 +212,7 @@ function create_parahuman(id,class_check,power){
 	var countdown = setInterval(frame, 1000);
 	function frame() {
 		//console.log("tick "+events+" "+id+" "+targets+" "+cd+" "+living_parahumans);
+		lifesigns(id,name,thisclass,initial_timer,timer,power);
 		if(events == 1 && id == targets && cd == 0){
 			//do something eventful
 			
@@ -258,11 +260,13 @@ function create_parahuman(id,class_check,power){
 		
 		$( "#timer"+id ).text(timer);
 		$( "#sharddeath"+id ).text(Number(power)+(Number(power)*(harvester*.02)));
+		
 	}
 	
 }
 
 function kill_parahuman(id,gainshards){
+	delete stattracker['id'+id];
 	$(".pimage"+id).attr("src","images/dead.jpg");
 	$(".parahuman"+id).animate({backgroundColor: '#000000'}, 5000);
 	timeout = window.setTimeout(function () {
@@ -272,6 +276,7 @@ function kill_parahuman(id,gainshards){
 	shards = shards+Number(gainshards);
 	update_shards();
 	living_parahumans.splice( $.inArray(id, living_parahumans), 1 );
+	
 }
 
 function time(){
@@ -490,8 +495,11 @@ function scroller(){
 function makecookie(){
 	var savestring=[];
 	//shards,conflict,class_created,warrior,harvester,gardener
-	savestring.push(shards,conflict,class_created,warrior,harvester,gardener);
-	console.log(savestring);
+	savestring.push(shards,conflict,class_created,warrior,harvester,gardener,living_parahumans.length,stattracker);
+	
+	//id,name,class,initial hp, current hp,power
+	//console.log(stattracker["id0"]);
+	//console.log(savestring);
 	document.cookie = "save="+savestring;
 }
 
@@ -514,6 +522,12 @@ function importcookie(){
 		harvester = Number(stringval[15]);
 		gardener = Number(stringval[16]);
 	}
+}
+
+function lifesigns(id,name,hclass,initial_hp,current_hp,power){
+	//stattracker
+	
+		stattracker["id"+id] = name+","+hclass+","+initial_hp+","+current_hp+","+power;
 }
 
 </script>
