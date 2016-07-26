@@ -501,6 +501,7 @@ function getCookie(name){
 
 function importcookie(){
 	var stringval = getCookie("save");
+	var stringval = stringval.split(',');
 	shards = stringval[0];
 	conflict = stringval[1];
 	class_created = [];
