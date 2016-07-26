@@ -7,9 +7,8 @@
 <script src="https://code.jquery.com/jquery-1.12.3.min.js" type="text/javascript"></script>
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
-<script src="li-scroller.js"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
-<link rel="stylesheet" href="li-scroller.css">
+<link rel="stylesheet" href="style/style.css">
 <!-- Thank you to Shemetz for providing name generation code used as a starting point -->
 <script src="names.js"></script>
 
@@ -210,19 +209,19 @@ function create_parahuman(id,class_check,power){
 	$( "#parahuman_container" ).append( '<div id="parahuman" class="parahuman'+id+'"><div id="protrait"><img class="pimage'+id+'" src="images/face1.png" /></div><div id="stats"><p>Name: '+name+'<br>Power level: '+power+'<br>Type: '+thisclass+'<br>Conflict per second: 2<br>Shards upon death: <span id="sharddeath'+id+'"></span></p></p></div><div id="life"><p>HP: <span id="timer'+id+'">'+timer+'</span><div id="progressbar'+id+'""></div></p></div></div>' );
 	var countdown = setInterval(frame, 1000);
 	function frame() {
-		console.log("tick "+events+" "+id+" "+targets+" "+cd+" "+living_parahumans);
+		//console.log("tick "+events+" "+id+" "+targets+" "+cd+" "+living_parahumans);
 		if(events == 1 && id == targets && cd == 0){
 			//do something eventful
 			
 			var figure = event_trigger();
-			console.log("figure "+figure);
+			//console.log("figure "+figure);
 			if (figure + timer < 0){
 				timer = 0;	
 			}else if (figure+timer > initial_timer) {
 					timer = initial_timer;
 			}else{
 				timer = figure + timer;	
-				console.log("timer "+timer);
+				//console.log("timer "+timer);
 			}
 			if (figure < 0){
 				$(".parahuman"+id).animate({backgroundColor: '#ff0000'}, '1000');
@@ -489,147 +488,6 @@ function scroller(){
 
 </script>
 
-<style>
-.left{
-	float:left;	
-	width:50%;
-}
-.left h3{
-text-align:center;	
-}
-.right{
-	float:left;
-	width:50%;
-}
-.shard_container{
-	margin: 0 auto;	
-	width:50%;
-	cursor:pointer;
-}
-.shard_container img{
-	width:100%;	
-}
-#container{
-	width: 600px;
-	margin:0 auto;
-	float: left;
-    background-color: white;	
-}
-
-#container h1{
-text-align:center;	
-}
-
-.cost{
-margin-left:20px;
-
-}
-
-.button{
-	border:3px solid black;
-	height:60px;
-	line-height:60px;
-	text-align:center;
-	font-size: 21px;	
-	cursor: pointer;
-}
-.title{
-	height: 60px;
-    line-height: 60px;	
-}
-
-.overlay1{
-	background-color: rgba(39,62,84,0.52);
-    z-index: 2;
-    color: gray;
-    width: 100%;
-    height: 100%;
-    opacity: 0.5;
-    float: left;
-}
-
-#parahuman_container{
-	border: 3px solid black;
-    padding: 20px;	
-}
-
-#parahuman{
-	display: inline-block; font-size: 20px; width: 100%; border-bottom: 1px solid black;	
-}
-
-#protrait{
-	float:left;
-}
-
-#stats{
-	float:left;	
-	width: 40%;
-}
-
-#stats p {
-	margin-top:0; margin-left:20px;	
-}
-
-#life{
-	float:right;	
-	width: 50%;
-}
-.secondary{
-	display:none;
-}
-.panel {
-	width:300px;
-	float:left;
-	height:420px;
-	background:#d9dada;
-	position:relative;
-	left:-300px;
-	z-index:-1;
-
-}
-.slider-arrow {
-	padding:5px;
-	width:46px;
-	float:left;
-	background:#d9dada;
-	font:400 12px Arial, Helvetica, sans-serif;
-	color:#000;
-	text-decoration:none;
-	position:relative;
-	left:-300px;
-}
-.master{
-    margin: 0 auto;
-}
-
-.panel h1{
-	text-align:center;
-}
-
-.unavailable{
-	background: repeating-linear-gradient(45deg,#000000,#000000 5px,#e3e3e3 5px,#e3e3e3 20px); 
-	width: 281px;
-	margin: 0 auto; 
-	opacity: .5;
-	cursor: pointer;
-}
-
-.available{
-	background: white; 
-	width: 281px;
-	margin: 0 auto; 
-	opacity: 1;
-	
-}
-.plus_btn{
-border: 1px solid black;
-padding: 2px 8px;
-border-radius: 6px;
-cursor:pointer;
-}
-
-
-</style>
 
 </head>
 
