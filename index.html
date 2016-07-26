@@ -224,7 +224,7 @@ function create_parahuman(id,class_check,power,_name,initial_hp,current_hp){
 	var countdown = setInterval(frame, 1000);
 	function frame() {
 		//console.log("tick "+events+" "+id+" "+targets+" "+cd+" "+living_parahumans);
-		lifesigns(id,name,class_check,initial_timer,timer,power);
+		lifesigns(id,name,classes.indexOf(thisclass),initial_timer,timer,power);
 		if(events == 1 && id == targets && cd == 0){
 			//do something eventful
 			
