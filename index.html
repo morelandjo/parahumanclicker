@@ -541,7 +541,7 @@ function importcookie(){
 		num_people = Number(stringval[17]);
 		//console.log(stringval[18]);
 		while (num_people > 0) {
-    		var id = stringval[18];
+    		//var id = stringval[18].replace("id", "");
 			var name = stringval[19];
 			console.log(name);
 			var hclass = Number(stringval[20]);
@@ -549,7 +549,7 @@ function importcookie(){
 			var current_hp = Number(stringval[22]);
 			var power = Number(stringval[23]);
 			
-			create_parahuman(id,hclass,power,name,initial_hp,current_hp);
+			create_parahuman(parahumans,hclass,power,name,initial_hp,current_hp);
 			stringval.splice(17, 6);
 			
     		num_people--;
