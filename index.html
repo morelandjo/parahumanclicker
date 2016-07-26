@@ -135,7 +135,7 @@ $( document ).ready(function() {
   		track:true
 	});
 	
-	
+	importcookie();
 	update_shards();
 	update_conflict();
 
@@ -488,10 +488,9 @@ function scroller(){
 
 function makecookie(){
 	var savestring=[];
-	//shards,conflict,classes_created,warrior,harvester,gardener
-	savestring.push(shards,conflict,classes_created,warrior,harvester,gardener);
+	//shards,conflict,class_created,warrior,harvester,gardener
+	savestring.push(shards,conflict,class_created,warrior,harvester,gardener);
 	document.cookie = "save="+savestring;
-	console.log(document.cookie);
 }
 
 function getCookie(name){
