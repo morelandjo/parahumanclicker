@@ -226,8 +226,6 @@ function create_parahuman(id,class_check,power,_name,initial_hp,current_hp){
 	var countdown = setInterval(frame, 1000);
 	function frame() {
 		//console.log("tick "+events+" "+id+" "+targets+" "+cd+" "+living_parahumans);
-		lifesigns(id,name,classes.indexOf(thisclass),initial_timer,timer,power);
-		makecookie();
 		if(events == 1 && id == targets && cd == 0){
 			//do something eventful
 			
@@ -237,11 +235,11 @@ function create_parahuman(id,class_check,power,_name,initial_hp,current_hp){
 				timer = 0;	
 			}else if (figure+timer > initial_timer) {
 					timer = initial_timer;
-					makecookie();
+					
 			}else{
 				timer = figure + timer;	
 				//console.log("timer "+timer);
-				makecookie();
+				
 			}
 			if (figure < 0){
 				$(".parahuman"+id).animate({backgroundColor: '#ff0000'}, '1000');
@@ -258,6 +256,8 @@ function create_parahuman(id,class_check,power,_name,initial_hp,current_hp){
 		if(cd==1 && events==0){
 			cd = 0;
 		}
+		lifesigns(id,name,classes.indexOf(thisclass),initial_timer,timer,power);
+		makecookie();
 
 		if (timer == 0){
 		
