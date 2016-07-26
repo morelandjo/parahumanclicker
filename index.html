@@ -148,6 +148,7 @@ $( document ).ready(function() {
 function update_shards(){
 	$('.num_shards').text(shards);
 	update_spawn();	
+	makecookie();
 }
 
 function update_conflict(){
@@ -175,6 +176,7 @@ function update_conflict(){
 		}
 		
 	}
+	makecookie();
 	
 }
 
@@ -225,6 +227,7 @@ function create_parahuman(id,class_check,power,_name,initial_hp,current_hp){
 	function frame() {
 		//console.log("tick "+events+" "+id+" "+targets+" "+cd+" "+living_parahumans);
 		lifesigns(id,name,classes.indexOf(thisclass),initial_timer,timer,power);
+		makecookie();
 		if(events == 1 && id == targets && cd == 0){
 			//do something eventful
 			
@@ -288,6 +291,7 @@ function kill_parahuman(id,gainshards){
 	shards = shards+Number(gainshards);
 	update_shards();
 	living_parahumans.splice( $.inArray(id, living_parahumans), 1 );
+	makecookie();
 	
 }
 
@@ -295,7 +299,6 @@ function time(){
 	//console.log(warrior);
 	scroller();
 	event_system();
-	makecookie();
 
 	if (warrior > 0){
 		conflict = conflict + 5*warrior;
