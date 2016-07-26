@@ -190,7 +190,7 @@ function update_spawn(){
 		
 }
 
-function create_parahuman(id,class_check,power){
+function create_parahuman(id,class_check,power,_name,initial_hp,current_hp){
 	parahumans++;
 	living_parahumans.push(id);
 	if (class_check == "random"){
@@ -201,18 +201,30 @@ function create_parahuman(id,class_check,power){
 	class_created[thisclass] = 1;
 	thisclass = classes[thisclass];
 	check_classes();
-	var initial_timer = 100;
-	var timer = 100;
+	if(initial_hp){
+		initial_timer = initial_hp;
+	}else{
+		var initial_timer = 100;
+	}
+	if(current_hp){
+		var timer = current_hp;
+	}else{
+		var timer = 100;	
+	}
 	var cd = 0;
-	var name = name_generate();
-	news_message("cape",name);
+	if (_name){
+		var name = _name;
+	}else{
+		var name = name_generate();
+		news_message("cape",name);
+	}
 	//var minutes = Math.floor(timer / 60);
 	//var seconds = timer-(minutes * 60);
 	$( "#parahuman_container" ).append( '<div id="parahuman" class="parahuman'+id+'"><div id="protrait"><img class="pimage'+id+'" src="images/face1.png" /></div><div id="stats"><p>Name: '+name+'<br>Power level: '+power+'<br>Type: '+thisclass+'<br>Conflict per second: 2<br>Shards upon death: <span id="sharddeath'+id+'"></span></p></p></div><div id="life"><p>HP: <span id="timer'+id+'">'+timer+'</span><div id="progressbar'+id+'""></div></p></div></div>' );
 	var countdown = setInterval(frame, 1000);
 	function frame() {
 		//console.log("tick "+events+" "+id+" "+targets+" "+cd+" "+living_parahumans);
-		lifesigns(id,name,thisclass,initial_timer,timer,power);
+		lifesigns(id,name,class_check,initial_timer,timer,power);
 		if(events == 1 && id == targets && cd == 0){
 			//do something eventful
 			
@@ -526,7 +538,21 @@ function importcookie(){
 		warrior = Number(stringval[14]);
 		harvester = Number(stringval[15]);
 		gardener = Number(stringval[16]);
+		num_people = Number(stringval[17]);
 		//console.log(stringval[18]);
+		while (num_people > 0) {
+    		var id = Number(stringval[18]);
+			var name = Number(stringval[19]);
+			var hclass = Number(stringval[20]);
+			var initial_hp = Number(stringval[21]);
+			var current_hp = Number(stringval[22]);
+			var power = Number(stringval[23]);
+			
+			create_parahuman(id,hclass,power,name,initial_hp,current_hp);
+			stringval.splice(17, 6);
+			
+    		num_people--;
+		}
 	}
 }
 
