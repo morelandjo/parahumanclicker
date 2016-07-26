@@ -512,16 +512,21 @@ function scroller(){
 
 function makecookie(){
 	var savestring=[];
-	var stattracker_convert;
+	//var stattracker_convert;
 	//shards,conflict,class_created,warrior,harvester,gardener
 	//console.log(stattracker);
 	for (var key in stattracker) {
        var arr = stattracker[key];
-	   stattracker_convert =stattracker_convert+","+key+","+arr;
+	   if (stattracker_convert){
+	   		var stattracker_convert = stattracker_convert+","+key+","+arr;
+	   }else{
+			var stattracker_convert  =key+","+arr;
+	   }
     }
-	//console.log(stattracker_convert);
-	savestring.push(shards,conflict,class_created,warrior,harvester,gardener,living_parahumans.length,stattracker_convert);
 	
+	console.log(stattracker_convert);
+	savestring.push(shards,conflict,class_created,warrior,harvester,gardener,living_parahumans.length,stattracker_convert);
+	//console.log(savestring);
 	document.cookie = "save="+savestring;
 }
 
@@ -554,7 +559,7 @@ function importcookie(){
 			var power = Number(stringval[23]);
 			
 			create_parahuman(parahumans,hclass,power,name,initial_hp,current_hp);
-			stringval.splice(18, 6);
+			stringval.splice(19, 6);
 			console.log (stringval);
     		num_people--;
 		}
