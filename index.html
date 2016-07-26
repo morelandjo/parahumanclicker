@@ -7,12 +7,14 @@
 <script src="https://code.jquery.com/jquery-1.12.3.min.js" type="text/javascript"></script>
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+<script src="li-scroller.js"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="li-scroller.css">
 <!-- Thank you to Shemetz for providing name generation code used as a starting point -->
 <script src="names.js"></script>
 
 <script>
-var shards = 300;
+var shards = 0;
 var conflict = 0;
 var parahumans = 0;
 var living_parahumans = [];
@@ -22,6 +24,8 @@ var cost = 0;
 var warrior = 0;
 var harvester = 0;
 var gardener = 0;
+var news = [];
+var live = 0;
 
 $( document ).ready(function() {
 	$( ".shard_container" ).click(function() {
@@ -132,7 +136,6 @@ $( document ).ready(function() {
   		track:true
 	});
 	
-
 	
 	update_shards();
 	update_conflict();
@@ -200,9 +203,11 @@ function create_parahuman(id,class_check,power){
 	var initial_timer = 100;
 	var timer = 100;
 	var cd = 0;
+	var name = name_generate();
+	news_message("cape",name);
 	//var minutes = Math.floor(timer / 60);
 	//var seconds = timer-(minutes * 60);
-	$( "#parahuman_container" ).append( '<div id="parahuman" class="parahuman'+id+'"><div id="protrait"><img class="pimage'+id+'" src="images/face1.png" /></div><div id="stats"><p>Name: '+name_generate()+'<br>Power level: '+power+'<br>Type: '+thisclass+'<br>Conflict per second: 2<br>Shards upon death: <span id="sharddeath'+id+'"></span></p></p></div><div id="life"><p>HP: <span id="timer'+id+'">'+timer+'</span><div id="progressbar'+id+'""></div></p></div></div>' );
+	$( "#parahuman_container" ).append( '<div id="parahuman" class="parahuman'+id+'"><div id="protrait"><img class="pimage'+id+'" src="images/face1.png" /></div><div id="stats"><p>Name: '+name+'<br>Power level: '+power+'<br>Type: '+thisclass+'<br>Conflict per second: 2<br>Shards upon death: <span id="sharddeath'+id+'"></span></p></p></div><div id="life"><p>HP: <span id="timer'+id+'">'+timer+'</span><div id="progressbar'+id+'""></div></p></div></div>' );
 	var countdown = setInterval(frame, 1000);
 	function frame() {
 		//console.log(events+" "+targets+" "+cd);
@@ -238,6 +243,7 @@ function create_parahuman(id,class_check,power){
 		
 			clearInterval(countdown);
 			kill_parahuman(id,Number(power)+(Number(power)*(harvester*.02)));
+			news_message("death",name);
 		}
 		if (timer == 0){}else{
 		conflict = conflict + 2;
@@ -270,6 +276,7 @@ function kill_parahuman(id,gainshards){
 
 function time(){
 	//console.log(warrior);
+	scroller();
 	event_system();
 
 	if (warrior > 0){
@@ -447,6 +454,41 @@ function bad_event(){
 	
 }
 
+
+
+	
+function news_message(type,name){
+	if (type == "cape"){
+		var message = "A new cape was seen in Brockton Bay today, calling themselves " + name+".";	
+	}
+	
+	if (type == "death"){
+		var message = name+" has died.";	
+	}
+	
+	news.push(message);
+}
+
+function scroller(){
+	//console.log("tick "+news.length+" "+live);
+	if(news.length > 0 && live == 0){
+		console.log(live);
+		live = 1;
+		$( "#ticker02" ).append("<li class='one' style='position: relative; list-style: none'>"+news[0]+"</li>");
+	
+		var width = $("#ticker02 .one").width();
+		var total_width = width+$("#container").width();
+		$("#ticker02 .one").css("right", -Math.abs(width));
+		$("#ticker02 .one").animate({ 
+    		right: "+="+total_width,
+  		}, total_width/.14, function() {
+    		news.splice(0, 1);
+			$( ".one" ).remove();
+			live = 0;
+  		});
+	}
+}
+
 </script>
 
 <style>
@@ -597,6 +639,10 @@ cursor:pointer;
 	<div class="master">
 	<div id="container">
     	<h1>Parahuman Clicker</h1>
+        
+        <ul id="ticker02" style="overflow:hidden;">
+		</ul>
+        
 		<div class="left">
         	<h3>Shards: <span class="num_shards"></span></h3>
             <div class="shard_container"><img src="images/shard.png" /></div>
