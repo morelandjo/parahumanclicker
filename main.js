@@ -1,5 +1,5 @@
-var shards = 0;
-var conflict = 0;
+var shards = 400;
+var conflict = 400;
 var parahumans = 0;
 var living_parahumans = [];
 var classes = ["Mover","Shaker","Brute","Blaster","Breaker","Master","Tinker","Thinker","Striker","Changer","Trump","Stranger"];
@@ -185,7 +185,6 @@ function check_skills(){
 	$("#gardener_lvl").text(gardener);
 	$( ".createParahuman .cost" ).each(function( index ) {
 		var new_value = Number($(this).text())-(Number($(this).text())*(gardener*.01));
-		console.log(new_value);
 		$(this).text(new_value);
 	});
 	$("#harvester_lvl").text(harvester);
@@ -196,6 +195,8 @@ function check_skills(){
 function create_parahuman(id,class_check,power,_name,initial_hp,current_hp){
 	parahumans++;
 	living_parahumans.push(id);
+	var collected_conflict = 0;
+	var bud = 0;
 	if (class_check == "random"){
 		var thisclass = Math.floor((Math.random() * classes.length));
 	}else{
@@ -221,8 +222,6 @@ function create_parahuman(id,class_check,power,_name,initial_hp,current_hp){
 		var name = name_generate();
 		news_message("cape",name);
 	}
-	//var minutes = Math.floor(timer / 60);
-	//var seconds = timer-(minutes * 60);
 	$( "#parahuman_container" ).append( '<div id="parahuman" class="parahuman'+id+'"><div id="protrait"><img class="pimage'+id+'" src="images/face1.png" /></div><div id="stats"><p>Name: '+name+'<br>Power level: '+power+'<br>Type: '+thisclass+'<br>Conflict per second: 2<br>Shards upon death: <span id="sharddeath'+id+'"></span></p></p></div><div id="life"><p>HP: <span id="timer'+id+'">'+timer+'</span><div id="progressbar'+id+'""></div></p></div></div>' );
 	var countdown = setInterval(frame, 1000);
 	function frame() {
@@ -231,16 +230,13 @@ function create_parahuman(id,class_check,power,_name,initial_hp,current_hp){
 			//do something eventful
 			
 			var figure = event_trigger();
-			//console.log("figure "+figure);
 			if (figure + timer < 0){
 				timer = 0;	
 			}else if (figure+timer > initial_timer) {
 					timer = initial_timer;
 					
 			}else{
-				timer = figure + timer;	
-				//console.log("timer "+timer);
-				
+				timer = figure + timer;		
 			}
 			if (figure < 0){
 				$(".parahuman"+id).animate({backgroundColor: '#ff0000'}, '1000');
@@ -249,9 +245,6 @@ function create_parahuman(id,class_check,power,_name,initial_hp,current_hp){
 				$(".parahuman"+id).animate({backgroundColor: '#00ff0c'}, '1000');
 				$(".parahuman"+id).animate({backgroundColor: '#ffffff'}, '1000');
 			}
-			
-			//minutes = minutes + 5;
-			//console.log("event");
 			cd = 1;
 		}
 		if(cd==1 && events==0){
@@ -267,10 +260,19 @@ function create_parahuman(id,class_check,power,_name,initial_hp,current_hp){
 			news_message("death",name);
 		}
 		if (timer == 0){}else{
-		//conflict = conflict + 2;
-		update_conflict(2);
+			update_conflict(2);
+			collected_conflict += 2;
 		}
-		//timer--
+		if (collected_conflict >= 100 && bud == 0){
+			var chance = (100 / collected_conflict)*.05;
+			var d = Math.random();
+			if (d <= chance){
+				create_parahuman(parahumans,"random",100)
+				bud = 1;
+			}
+			
+		}
+		
 		$( function() {
     		$( "#progressbar"+id ).progressbar({
       			value: (timer/initial_timer)*100
@@ -291,7 +293,6 @@ function kill_parahuman(id,gainshards){
 	timeout = window.setTimeout(function () {
 		$( ".parahuman"+id ).remove();
 	}, 5000);
-	//$( ".parahuman"+id ).remove();
 	update_shards(Number(gainshards));
 	living_parahumans.splice( $.inArray(id, living_parahumans), 1 );
 	makesave();
@@ -299,12 +300,10 @@ function kill_parahuman(id,gainshards){
 }
 
 function time(){
-	//console.log(warrior);
 	scroller();
 	event_system();
 
 	if (warrior > 0){
-		//conflict = conflict + 5*warrior;
 		update_conflict(5*warrior);
 	}
 	
@@ -344,7 +343,6 @@ function check_classes(){
 
 function warrior_skill(){
 	if (shards >= (warrior+1)*100){
-		//console.log("fire");
 		update_shards(-(warrior+1)*100);
 		warrior++;
 		$( "#warrior_lvl" ).text( warrior );
@@ -358,7 +356,6 @@ function warrior_skill(){
 
 function harvester_skill(){
 	if (shards >= (harvester+1)*200){
-		//console.log("fire");
 		update_shards(-(harvester+1)*200);
 		harvester++;
 		$( "#harvester_lvl" ).text( harvester );
@@ -372,13 +369,10 @@ function harvester_skill(){
 
 function gardener_skill(){
 	if (shards >= (gardener+1)*300){
-		//console.log("fire");
 		update_shards(-(gardener+1)*300);
 		gardener++;
 		$( ".createParahuman .cost" ).each(function( index ) {
-			//var new_value = Number($(this).text)-(Number($(this).text)*(gardener*.01));
 			var new_value = Number($(this).text())-(Number($(this).text())*(gardener*.01));
-			console.log(new_value);
 			$(this).text(new_value);
 		});
 		$( "#gardener_lvl" ).text( gardener );
@@ -389,8 +383,6 @@ function gardener_skill(){
 	});
 	}
 }
-
-
 
 
 String.prototype.capitalize = function() {
@@ -478,8 +470,6 @@ function bad_event(){
 	
 }
 
-
-
 	
 function news_message(type,name){
 	if (type == "cape"){
@@ -494,7 +484,6 @@ function news_message(type,name){
 }
 
 function scroller(){
-	//console.log("tick "+news.length+" "+live);
 	if(news.length > 0 && live == 0){
 		live = 1;
 		$( "#newsScroller" ).append("<li class='one' style='position: relative; list-style: none'>"+news[0]+"</li>");
@@ -514,9 +503,7 @@ function scroller(){
 
 function makesave(){
 	var savestring=[];
-	//var stattracker_convert;
 	//shards,conflict,class_created,warrior,harvester,gardener
-	//console.log(stattracker);
 	for (var key in stattracker) {
        var arr = stattracker[key];
 	   if (stattracker_convert){
@@ -525,10 +512,7 @@ function makesave(){
 			var stattracker_convert  =key+","+arr;
 	   }
     }
-	
-	//console.log(stattracker_convert);
 	savestring.push(shards,conflict,class_created,warrior,harvester,gardener,living_parahumans.length,stattracker_convert);
-	//console.log(savestring);
 	localStorage.setItem("save", savestring);
 }
 
@@ -558,7 +542,6 @@ function importsave(){
 			
 			create_parahuman(parahumans,hclass,power,name,initial_hp,current_hp);
 			stringval.splice(19, 6);
-			//console.log (stringval);
     		num_people--;
 		}
 	
