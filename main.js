@@ -11,6 +11,8 @@ var gardener = 0;
 var news = [];
 var live = 0;
 var stattracker = [];
+var heroes = [];
+var villains = [];
 
 $( document ).ready(function() {
 	
@@ -192,9 +194,22 @@ function check_skills(){
 		
 }
 
-function create_parahuman(id,class_check,power,_name,initial_hp,current_hp){
+function create_parahuman(id,class_check,power,_name,initial_hp,current_hp,_affiliation){
 	parahumans++;
 	living_parahumans.push(id);
+	
+	if (_affiliation){
+		var affiliation = _affiliation;
+	}else{
+		var affiliation = Math.floor((Math.random() * 4) + 1);
+		if (affiliation <= 3){
+			affiliation = "Villain";	
+			heroes.push(id);
+		}else{
+			affiliation = "Hero"	;
+			villains.push(id);
+		}	
+	}
 	var collected_conflict = 0;
 	var bud = 0;
 	if (class_check == "random"){
@@ -222,7 +237,7 @@ function create_parahuman(id,class_check,power,_name,initial_hp,current_hp){
 		var name = name_generate();
 		news_message("cape",name);
 	}
-	$( "#parahuman_container" ).append( '<div id="parahuman" class="parahuman'+id+'"><div id="protrait"><img class="pimage'+id+'" src="images/face1.png" /></div><div id="stats"><p>Name: '+name+'<br>Power level: '+power+'<br>Type: '+thisclass+'<br>Conflict per second: 2<br>Shards upon death: <span id="sharddeath'+id+'"></span></p></p></div><div id="life"><p>HP: <span id="timer'+id+'">'+timer+'</span><div id="progressbar'+id+'""></div></p></div></div>' );
+	$( "#parahuman_container" ).append( '<div id="parahuman" class="parahuman'+id+'"><div id="protrait"><img class="pimage'+id+'" src="images/face1.png" /></div><div id="stats"><p>Name: '+name+'<br>Power level: '+power+'<br>Type: '+thisclass+'<br>Conflict per second: 2<br>Shards upon death: <span id="sharddeath'+id+'"></span><br>Affiliation: '+affiliation+'</p></div><div id="life"><p>HP: <span id="timer'+id+'">'+timer+'</span><div id="progressbar'+id+'""></div></p></div></div>' );
 	var countdown = setInterval(frame, 1000);
 	function frame() {
 		//console.log("tick "+events+" "+id+" "+targets+" "+cd+" "+living_parahumans);
@@ -250,13 +265,13 @@ function create_parahuman(id,class_check,power,_name,initial_hp,current_hp){
 		if(cd==1 && events==0){
 			cd = 0;
 		}
-		lifesigns(id,name,classes.indexOf(thisclass),initial_timer,timer,power);
+		lifesigns(id,name,classes.indexOf(thisclass),initial_timer,timer,power,affiliation);
 		makesave();
 
 		if (timer == 0){
 		
 			clearInterval(countdown);
-			kill_parahuman(id,Number(power)+(Number(power)*(harvester*.02)));
+			kill_parahuman(id,Number(power)+(Number(power)*(harvester*.02)),affiliation);
 			news_message("death",name);
 		}
 		if (timer == 0){}else{
@@ -286,7 +301,7 @@ function create_parahuman(id,class_check,power,_name,initial_hp,current_hp){
 	
 }
 
-function kill_parahuman(id,gainshards){
+function kill_parahuman(id,gainshards,affiliation){
 	delete stattracker['id'+id];
 	$(".pimage"+id).attr("src","images/dead.jpg");
 	$(".parahuman"+id).animate({backgroundColor: '#000000'}, 5000);
@@ -295,6 +310,11 @@ function kill_parahuman(id,gainshards){
 	}, 5000);
 	update_shards(Number(gainshards));
 	living_parahumans.splice( $.inArray(id, living_parahumans), 1 );
+	if (affiliation == "Hero"){
+		heroes.splice( $.inArray(id, heroes), 1 );	
+	}else if (affiliation == "Villain"){
+		villains.splice( $.inArray(id, villains), 1 );		
+	}
 	makesave();
 	
 }
@@ -539,17 +559,18 @@ function importsave(){
 			var initial_hp = Number(stringval[21]);
 			var current_hp = Number(stringval[22]);
 			var power = Number(stringval[23]);
+			var affiliation = stringval[24];
 			
-			create_parahuman(parahumans,hclass,power,name,initial_hp,current_hp);
-			stringval.splice(19, 6);
+			create_parahuman(parahumans,hclass,power,name,initial_hp,current_hp,affiliation);
+			stringval.splice(19, 7);
     		num_people--;
 		}
 	
 	}
 }
 
-function lifesigns(id,name,hclass,initial_hp,current_hp,power){
+function lifesigns(id,name,hclass,initial_hp,current_hp,power,affiliation){
 	//stattracker
 	
-		stattracker["id"+id] = name+","+hclass+","+initial_hp+","+current_hp+","+power;
+		stattracker["id"+id] = name+","+hclass+","+initial_hp+","+current_hp+","+power+","+affiliation;
 }
