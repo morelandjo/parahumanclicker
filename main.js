@@ -507,7 +507,9 @@ function makecookie(){
 	//console.log(stattracker_convert);
 	savestring.push(shards,conflict,class_created,warrior,harvester,gardener,living_parahumans.length,stattracker_convert);
 	//console.log(savestring);
-	document.cookie = "save="+savestring;
+	//document.cookie = "save="+savestring;
+	localStorage.setItem("save", savestring);
+	console.log(localStorage.getItem("save"));
 }
 
 function getCookie(name){
@@ -517,8 +519,11 @@ function getCookie(name){
 }
 
 function importcookie(){
-	if(getCookie("save")){
-		var stringval = getCookie("save");
+	//if(getCookie("save")){
+	if (localStorage.getItem("save") === null) {
+  	
+		//var stringval = getCookie("save");
+		var stringval = localStorage.getItem("save");
 		var stringval = stringval.split(',');
 		//console.log (stringval);
 		shards = Number(stringval[0]);
@@ -543,6 +548,7 @@ function importcookie(){
 			//console.log (stringval);
     		num_people--;
 		}
+	//}
 	}
 }
 
