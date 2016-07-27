@@ -111,6 +111,7 @@ $( document ).ready(function() {
 
 
 function update_shards(change){
+	change = change || 0;
 	shards += change;
 	$('.num_shards').text(shards);
 	update_spawn();	
@@ -436,6 +437,9 @@ function bad_event(){
 	return base;
 	
 }
+
+
+
 	
 function news_message(type,name){
 	if (type == "cape"){
