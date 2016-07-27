@@ -1,5 +1,5 @@
-var shards = 400;
-var conflict = 400;
+var shards = 0;
+var conflict = 0;
 var parahumans = 0;
 var living_parahumans = [];
 var classes = ["Mover","Shaker","Brute","Blaster","Breaker","Master","Tinker","Thinker","Striker","Changer","Trump","Stranger"];
@@ -454,13 +454,21 @@ function name_generate() {
 }
 
 function event_trigger(){
-	var pick = Math.floor((Math.random() * 2) + 1);
 	
-	if (pick == 1){
-		return good_event();
-	}
-	if (pick == 2){
-		return bad_event();
+	var pick = Math.floor((Math.random() * 2) + 1);
+	console.log(heroes);
+	console.log(villains);
+	if(heroes.length > 0 && villains.length > 0 && Math.floor((Math.random() * 5) + 1) == 5){
+		return battle_event();	
+		
+	}else{
+	
+		if (pick == 1){
+			return good_event();
+		}
+		if (pick == 2){
+			return bad_event();
+		}
 	}
 }
 
@@ -490,14 +498,31 @@ function bad_event(){
 	
 }
 
+function battle_event(){
+		var base = -20;
+		var hero = heroes[Math.floor(Math.random() * heroes.length)];
+		var villain = villains[Math.floor(Math.random() * villains.length)];
+		var id = "id"+hero;
+		hero = stattracker[id].split(',');
+		id = "id"+villain;
+		villain = stattracker["id"+villain].split(',');
+		var message = hero[0]+" and "+villain[0]+" were seen fighting in the streets.";
+		news_message("fight",null,message);
+		return base;
+}
+
 	
-function news_message(type,name){
+function news_message(type,name,_message){
 	if (type == "cape"){
 		var message = "A new cape was seen in "+cities[Math.floor(Math.random() * cities.length)]+" today, calling themselves " + name+".";	
 	}
 	
 	if (type == "death"){
 		var message = name+" has died.";	
+	}
+	
+	if (type == "fight"){
+		var message = _message	
 	}
 	
 	news.push(message);
