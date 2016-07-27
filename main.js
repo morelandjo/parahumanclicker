@@ -478,7 +478,7 @@ function scroller(){
 		$( "#newsScroller" ).append("<li class='one' style='position: relative; list-style: none'>"+news[0]+"</li>");
 	
 		var width = $("#newsScroller .one").width();
-		var total_width = width+$("#container").width();
+		var total_width = width+$("#mainGame").width();
 		$("#newsScroller .one").css("right", -Math.abs(width));
 		$("#newsScroller .one").animate({ 
     		right: "+="+total_width,
