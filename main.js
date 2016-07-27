@@ -119,7 +119,7 @@ $( document ).ready(function() {
   		track:true
 	});
 	
-	importcookie();
+	importsave();
 	update_shards();
 	update_conflict();
 	check_classes();
@@ -133,10 +133,13 @@ function update_shards(change){
 	shards += change;
 	$('.num_shards').text(shards);
 	update_spawn();	
-	makecookie();
+	makesave();
 }
 
-function update_conflict(){
+function update_conflict(change){
+	change = change || 0;
+	conflict += change;
+	
 	$('.num_conflict').text(conflict);
 
 	if (conflict >= 100) {
@@ -161,7 +164,7 @@ function update_conflict(){
 		}
 		
 	}
-	makecookie();
+	makesave();
 	
 }
 
@@ -242,7 +245,7 @@ function create_parahuman(id,class_check,power,_name,initial_hp,current_hp){
 			cd = 0;
 		}
 		lifesigns(id,name,classes.indexOf(thisclass),initial_timer,timer,power);
-		makecookie();
+		makesave();
 
 		if (timer == 0){
 		
@@ -251,8 +254,8 @@ function create_parahuman(id,class_check,power,_name,initial_hp,current_hp){
 			news_message("death",name);
 		}
 		if (timer == 0){}else{
-		conflict = conflict + 2;
-		update_conflict();
+		//conflict = conflict + 2;
+		update_conflict(2);
 		}
 		//timer--
 		$( function() {
@@ -278,7 +281,7 @@ function kill_parahuman(id,gainshards){
 	//$( ".parahuman"+id ).remove();
 	update_shards(Number(gainshards));
 	living_parahumans.splice( $.inArray(id, living_parahumans), 1 );
-	makecookie();
+	makesave();
 	
 }
 
@@ -288,8 +291,8 @@ function time(){
 	event_system();
 
 	if (warrior > 0){
-		conflict = conflict + 5*warrior;
-		update_conflict();
+		//conflict = conflict + 5*warrior;
+		update_conflict(5*warrior);
 	}
 	
 	if (gardener > 0){
@@ -490,7 +493,7 @@ function scroller(){
 	}
 }
 
-function makecookie(){
+function makesave(){
 	var savestring=[];
 	//var stattracker_convert;
 	//shards,conflict,class_created,warrior,harvester,gardener
@@ -507,25 +510,16 @@ function makecookie(){
 	//console.log(stattracker_convert);
 	savestring.push(shards,conflict,class_created,warrior,harvester,gardener,living_parahumans.length,stattracker_convert);
 	//console.log(savestring);
-	//document.cookie = "save="+savestring;
 	localStorage.setItem("save", savestring);
-	console.log(localStorage.getItem("save"));
 }
 
-function getCookie(name){
-    var re = new RegExp(name + "=([^;]+)");
-    var value = re.exec(document.cookie);
-    return (value != null) ? unescape(value[1]) : null;
-}
 
-function importcookie(){
-	//if(getCookie("save")){
+function importsave(){
+	
 	if (localStorage.getItem("save") !== null) {
-  	
-		//var stringval = getCookie("save");
+
 		var stringval = localStorage.getItem("save");
 		var stringval = stringval.split(',');
-		//console.log (stringval);
 		shards = Number(stringval[0]);
 		conflict = Number(stringval[1]);
 		class_created = [];
@@ -548,7 +542,7 @@ function importcookie(){
 			//console.log (stringval);
     		num_people--;
 		}
-	//}
+	
 	}
 }
 
