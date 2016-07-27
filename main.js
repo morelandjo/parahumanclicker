@@ -33,7 +33,7 @@ $( document ).ready(function() {
 	
 	$( ".createParahuman" ).mouseup(function() {
     	var element = $(this).find(".cost");
-    	$(element).text("100")
+    	$(element).text($(element).text());
     	if (shards >= cost) {
 			update_shards(-cost);
 			if ($(this).attr("id") == "createRandom"){
@@ -115,7 +115,7 @@ $( document ).ready(function() {
 	});
 	
 	$( "#gardener .levelUpSkill" ).tooltip({
-  		content: "<p>The Gardener skill generates shards automatically</p><p>Next Level: </p><p>Cost: 300 shards<br>Effect: +10 shards per second</p>",
+  		content: "<p>The Gardener skill generates shards automatically and reduces the cost of new parahumans.</p><p>Next Level: </p><p>Cost: 300 shards<br>Effect: +10 shards per second, cost of new parahumans reduced by 1%</p>",
   		track:true
 	});
 	
@@ -123,6 +123,7 @@ $( document ).ready(function() {
 	update_shards();
 	update_conflict();
 	check_classes();
+	check_skills();
 
 	var global_clock = setInterval(time, 1000);
 });
@@ -177,6 +178,18 @@ function update_spawn(){
 		if (shards < 100 ){
 				$('.createParahuman').addClass('unableToBuy');
 		}
+		
+}
+
+function check_skills(){
+	$("#gardener_lvl").text(gardener);
+	$( ".createParahuman .cost" ).each(function( index ) {
+		var new_value = Number($(this).text())-(Number($(this).text())*(gardener*.01));
+		console.log(new_value);
+		$(this).text(new_value);
+	});
+	$("#harvester_lvl").text(harvester);
+	$("#warrior_lvl").text(warrior);
 		
 }
 
@@ -362,10 +375,16 @@ function gardener_skill(){
 		//console.log("fire");
 		update_shards(-(gardener+1)*300);
 		gardener++;
+		$( ".createParahuman .cost" ).each(function( index ) {
+			//var new_value = Number($(this).text)-(Number($(this).text)*(gardener*.01));
+			var new_value = Number($(this).text())-(Number($(this).text())*(gardener*.01));
+			console.log(new_value);
+			$(this).text(new_value);
+		});
 		$( "#gardener_lvl" ).text( gardener );
 		$('#gardener .levelUpSkill').tooltip("destroy");
 		$( "#gardener .levelUpSkill" ).tooltip({
-  		content: "<p>The Gardener skill generates shards automatically</p><p>Current level: +"+gardener*10+"% shards per second</p><p>Next Level: </p><p>Cost: "+(gardener+1)*300+" shards<br>Effect: +"+(gardener+1)*10+"% shards per second</p>",
+  		content: "<p>The Gardener skill generates shards automatically, and reduces the cost of new parahumans.</p><p>Current level: +"+gardener*10+"% shards per second, "+gardener+"% new parahuman cost reduction</p><p>Next Level: </p><p>Cost: "+(gardener+1)*300+" shards<br>Effect: +"+(gardener+1)*10+"% shards per second, "+gardener+1+"% new parahuman cost reduction</p>",
   		track:true
 	});
 	}
