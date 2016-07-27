@@ -1,42 +1,54 @@
 @charset "UTF-8";
 /* CSS Document */
 
-.left{
-	float:left;	
-	width:50%;
+#newsScroller{
+	overflow:hidden;
 }
-.left h3{
-text-align:center;	
+
+.shardPanel{
+	float: left;
+	width: 50%;
 }
-.right{
-	float:left;
+
+.skillBox{
+	text-align: center;
+	width: 280px;
+	margin: 0 auto;
+	padding: 10px 0px;
+	border: 1px solid black;
+}
+
+.skillText{
+	vertical-align: super;
+	padding-left: 10px;
+	display: inline-block;
+}
+
+.createParahumansPanel{
+	float:right;
 	width:50%;
 }
 .shard_container{
-	margin: 0 auto;	
-	width:50%;
-	cursor:pointer;
+	width: 50%;
+	cursor: pointer;
+	margin-left: 25%;
 }
-.shard_container img{
-	width:100%;	
-}
-#container{
+#mainGame{
 	width: 600px;
 	margin:0 auto;
 	float: left;
     background-color: white;	
 }
 
-#container h1{
-text-align:center;	
+.title{
+	text-align:center;	
 }
 
 .cost{
-margin-left:20px;
-
+	margin-left:20px;
 }
 
-.button{
+.createParahuman{
 	border:3px solid black;
 	height:60px;
 	line-height:60px;
@@ -44,12 +56,8 @@ margin-left:20px;
 	font-size: 21px;	
 	cursor: pointer;
 }
-.title{
-	height: 60px;
-    line-height: 60px;	
-}
 
-.overlay1{
+.unableToBuy{
 	background-color: rgba(39,62,84,0.52);
     z-index: 2;
     color: gray;
@@ -59,6 +67,13 @@ margin-left:20px;
     float: left;
 }
 
+.unavailable{
+	background: repeating-linear-gradient(45deg,#000000,#000000 5px,#e3e3e3 5px,#e3e3e3 20px); 
+	width: 281px;
+	margin: 0 auto; 
+	opacity: .5;
+	cursor: pointer;
+}
 #parahuman_container{
 	border: 3px solid black;
     padding: 20px;	
@@ -85,10 +100,12 @@ margin-left:20px;
 	float:right;	
 	width: 50%;
 }
-.secondary{
+
+.locked{
 	display:none;
 }
-.panel {
+
+.skillsPanel {
 	width:300px;
 	float:left;
 	height:420px;
@@ -109,20 +126,8 @@ margin-left:20px;
 	position:relative;
 	left:-300px;
 }
-.master{
+.mainGame{
     margin: 0 auto;
-}
-
-.panel h1{
-	text-align:center;
-}
-
-.unavailable{
-	background: repeating-linear-gradient(45deg,#000000,#000000 5px,#e3e3e3 5px,#e3e3e3 20px); 
-	width: 281px;
-	margin: 0 auto; 
-	opacity: .5;
-	cursor: pointer;
 }
 
 .available{
@@ -130,12 +135,10 @@ margin-left:20px;
 	width: 281px;
 	margin: 0 auto; 
 	opacity: 1;
-	
 }
-.plus_btn{
-border: 1px solid black;
-padding: 2px 8px;
-border-radius: 6px;
-cursor:pointer;
+.levelUpSkill{
+	border: 1px solid black;
+	padding: 2px 8px;
+	border-radius: 6px;
+	cursor:pointer;
 }
-
