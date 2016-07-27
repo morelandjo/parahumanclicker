@@ -520,7 +520,7 @@ function getCookie(name){
 
 function importcookie(){
 	//if(getCookie("save")){
-	if (localStorage.getItem("save") === null) {
+	if (localStorage.getItem("save") !== null) {
   	
 		//var stringval = getCookie("save");
 		var stringval = localStorage.getItem("save");
