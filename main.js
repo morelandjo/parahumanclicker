@@ -464,7 +464,7 @@ function bad_event(){
 	
 function news_message(type,name){
 	if (type == "cape"){
-		var message = "A new cape was seen in Brockton Bay today, calling themselves " + name+".";	
+		var message = "A new cape was seen in "+cities[Math.floor(Math.random() * cities.length)]+" today, calling themselves " + name+".";	
 	}
 	
 	if (type == "death"){
