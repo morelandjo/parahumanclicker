@@ -13,6 +13,24 @@ var live = 0;
 var stattracker = [];
 
 $( document ).ready(function() {
+	
+	$( ".shard_container" ).click(function() {
+		update_shards(1)
+	});
+
+	$( "#warrior .levelUpSkill" ).click(function() {
+		warrior_skill()
+	});
+	
+	$( "#harvester .levelUpSkill" ).click(function() {
+		harvester_skill()
+	});
+	
+	$( "#gardener .levelUpSkill" ).click(function() {
+		gardener_skill()
+	});
+	
+	
 	$( ".createParahuman" ).mouseup(function() {
     	var element = $(this).find(".cost");
     	$(element).text("100")
