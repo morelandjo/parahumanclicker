@@ -1,4 +1,4 @@
-var shards = 300;
+var shards = 0;
 var conflict = 0;
 var parahumans = 0;
 var living_parahumans = [];
@@ -179,15 +179,14 @@ function update_conflict(change){
 }
 
 function update_spawn(){
-		if (shards >= 100) {
-			$( ".createParahuman" ).each(function( i ) {
-				$(this).removeClass('unableToBuy');
-			});
-		}
-		if (shards < 100 ){
-				$('.createParahuman').addClass('unableToBuy');
-		}
-		
+	if (shards >= 100) {
+		$( ".createParahuman" ).each(function( i ) {
+			$(this).removeClass('unableToBuy');
+		});
+	}
+	if (shards < 100 ){
+			$('.createParahuman').addClass('unableToBuy');
+	}	
 }
 
 function check_skills(){
@@ -341,42 +340,26 @@ function shuffle(a) {
 }
 
 var tick = 0;
-var events = 0;
 function event_system(){
 	
-	//var roll = Math.floor((Math.random() * 2) + 1);
-	//if (roll == 1 && tick == 0){
 	if (tick == 0){
 		tick = 2;
-		events = 1;
-		if(living_parahumans.length > 0){
-			var targets = Math.floor((Math.random() * living_parahumans.length));
-			console.log(targets);
-				shuffle(living_parahumans);
-				while (targets > 0){
-					event_trigger(living_parahumans[targets]);
-					targets--;	
-				}
-			
-		}
-		
+			if(living_parahumans.length > 0){
+				var targets = Math.floor((Math.random() * living_parahumans.length));
+					shuffle(living_parahumans);
+					while (targets >= 0){
+						event_trigger(living_parahumans[targets]);
+						targets--;	
+					}
+			}
 	}
-	if (tick > 0){
-		tick--;
-	}
-	if(tick == 0){
-		events = 0;
-	}
-
+	tick--;
 }
 
 function event_trigger(ids){
 	
 	var pick = Math.floor((Math.random() * 2) + 1);
-	//console.log(heroes);
-	//console.log(villains);
 	if(heroes.length > 0 && villains.length > 0 && Math.floor((Math.random() * 5) + 1) == 5){
-		console.log("battle");
 		battle_event(ids);
 		 		
 	}else{
@@ -420,7 +403,6 @@ function bad_event(ids){
 
 function battle_event(ids){
 		var base = -20;
-		//console.log("heroes: "+heroes+" villains: "+villains);
 		if (jQuery.inArray( ids, heroes ) != -1){
 			var hero = ids;
 			var villain = villains[Math.floor(Math.random() * villains.length)];
@@ -428,14 +410,10 @@ function battle_event(ids){
 			var villain = ids;	
 			var hero = heroes[Math.floor(Math.random() * heroes.length)];
 		}
-		//var hero = heroes[Math.floor(Math.random() * heroes.length)];
-		//var villain = villains[Math.floor(Math.random() * villains.length)];
-		//console.log("heroes: "+heroes+" villains: "+villains);
 		var id = "id"+hero;
 		hero = stattracker[id].split(',');
 		hero[3] = Number(hero[3]) + base;
 		stattracker[id] = hero.toString();
-		//console.log("heroes: "+heroes+" villains: "+villains);
 		id = "id"+villain;
 		villain = stattracker["id"+villain].split(',');
 		villain[3] = Number(villain[3]) + base;
@@ -564,7 +542,6 @@ function news_message(type,name,_message){
 	}
 	
 	if (type == "fight" && jQuery.inArray( _message, news ) == -1){
-		console.log(_message);
 		var message = _message;	
 	}
 	if(message){
@@ -656,7 +633,5 @@ function importsave(){
 }
 
 function lifesigns(id,name,hclass,initial_hp,current_hp,power,affiliation){
-	//stattracker
-	
-		stattracker["id"+id] = name+","+hclass+","+initial_hp+","+current_hp+","+power+","+affiliation;
+	stattracker["id"+id] = name+","+hclass+","+initial_hp+","+current_hp+","+power+","+affiliation;
 }
