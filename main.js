@@ -43,7 +43,7 @@ $( document ).ready(function() {
 		toggleAutosave()
 	});
 	
-	
+	// Create Parahuman buttons, function to hold mouse down and add shards
 	$( ".createParahuman" ).mouseup(function() {
     	var element = $(this).find(".cost");
     	$(element).text($(element).text());
@@ -72,6 +72,7 @@ $( document ).ready(function() {
 		}, 400);
   	});
 
+	//Clears the mousedown function (adding shards) regardless of if the mouse is still over the button
   	$(document).mouseup(function(){
     	if (typeof timeout != "undefined"){
     		clearInterval(timeout);
@@ -79,6 +80,7 @@ $( document ).ready(function() {
     	}
 	});
 
+	//Animation for sliding skill panel
 	$(function(){
 		$('.slider-arrow').click(function(){
         	if($(this).hasClass('show')){
@@ -129,6 +131,7 @@ $( document ).ready(function() {
   		track:true
 	});
 	
+	//These are the function checks, in the case of a save game, so all of the information from the loaded variables is displayed correctly
 	importsave();
 	update_shards();
 	update_conflict();
@@ -138,7 +141,7 @@ $( document ).ready(function() {
 	var global_clock = setInterval(time, 1000);
 });
 
-
+//Function to update the shards display
 function update_shards(change){
 	shards += (change || 0);
 	$('.num_shards').text(dp(shards));
@@ -146,6 +149,7 @@ function update_shards(change){
 	makesave();
 }
 
+//Function to update conflict display, also checks if skills are available
 function update_conflict(change){
 	change = change || 0;
 	conflict += change;
@@ -178,6 +182,7 @@ function update_conflict(change){
 	
 }
 
+//Checks to see if you have enough shards to spawn a new parahuman
 function update_spawn(){
 	if (shards >= 100) {
 		$( ".createParahuman" ).each(function( i ) {
@@ -189,6 +194,7 @@ function update_spawn(){
 	}	
 }
 
+//Sets the display level of your skills, used when loading a save 
 function check_skills(){
 	$("#gardener_lvl").text(gardener);
 	$( ".createParahuman .cost" ).each(function( index ) {
@@ -200,10 +206,12 @@ function check_skills(){
 		
 }
 
+//This function creates a new parahuman and continues until it dies
 function create_parahuman(id,class_check,power,_name,initial_hp,current_hp,_affiliation){
 	parahumans++;
 	living_parahumans.push(id);
 	
+	//start checks for saved parahuman
 	if (_affiliation){
 		var affiliation = _affiliation;
 	}else{
@@ -216,65 +224,78 @@ function create_parahuman(id,class_check,power,_name,initial_hp,current_hp,_affi
 			villains.push(id);
 		}	
 	}
-	var collected_conflict = 0;
-	var bud = 0;
 	if (class_check == "random"){
 		var thisclass = Math.floor((Math.random() * classes.length));
 	}else{
 		var thisclass = class_check;
 	}
-	class_created[thisclass] = 1;
-	thisclass = classes[thisclass];
-	check_classes();
 	
 	var hp_start = initial_hp || 100;
 	var hp_current = current_hp || 100;
-	var cd = 0;
+	
 	if (_name){
 		var name = _name;
+		//specifically here, if parahuman is not from a save, announce it's birth
 	}else{
 		var name = name_generate();
 		news_message("cape",name);
 	}
 	
+	//end checks for saved parahuman
+	
+	//variables relating to the bud system
+	var collected_conflict = 0;
+	var bud = 0;
+	
+	//when you create a random parahuman, if this is the first time that class is born, show a button to let yourself create more of that class
+	class_created[thisclass] = 1;
+	thisclass = classes[thisclass];
+	check_classes();
+	
+	//this is the "pulse" of the parahuman, these variables are used in the save and this system also lets you "hook" into it using the event system, to modify hp or other stats via events
 	lifesigns(id,name,classes.indexOf(thisclass),hp_start,hp_current,power,affiliation);
 	makesave();
 	
+	//visual display of the parahuman
 	$( "#parahuman_container" ).append( '<div id="parahuman" class="parahuman'+id+'"><div id="protrait"><img class="pimage'+id+'" src="images/face1.png" /></div><div id="stats"><p>Name: '+name+'<br>Power level: '+dp(power)+'<br>Type: '+thisclass+'<br>Conflict per second: 2<br>Shards upon death: <span id="sharddeath'+id+'"></span><br>Affiliation: '+affiliation+'</p></div><div id="life"><p>HP: <span id="timer'+id+'">'+hp_current+'</span><div id="progressbar'+id+'""></div></p></div></div>' );
+	//check the parahuman each second, to adjust hp or other stats visually
 	var countdown = setInterval(frame, 1000);
 	function frame() {
-		//console.log("tick "+events+" "+id+" "+targets+" "+cd+" "+living_parahumans);
+		//if hp has gone down since last second, flash red
+		if (stattracker["id"+id].split(',')[3] < hp_current){	
+			$(".parahuman"+id).animate({backgroundColor: '#ff0000'}, '1000');
+			$(".parahuman"+id).animate({backgroundColor: '#ffffff'}, '1000');
 		
+		//if hp has gone up since last second, flash green		
+		}else if (stattracker["id"+id].split(',')[3] > hp_current){	
+			$(".parahuman"+id).animate({backgroundColor: '#00ff0c'}, '1000');
+			$(".parahuman"+id).animate({backgroundColor: '#ffffff'}, '1000');
+		}
+		//make sure hp never goes below 0, and never goes above the initial hp value
+		hp_current = stattracker["id"+id].split(',')[3];
+		if (hp_current < 0){
+			hp_current = 0;
+		}
+		if(hp_current > hp_start){
+			hp_current = hp_start;	
+		}
 		
-			if (stattracker["id"+id].split(',')[3] < hp_current){	
-				$(".parahuman"+id).animate({backgroundColor: '#ff0000'}, '1000');
-				$(".parahuman"+id).animate({backgroundColor: '#ffffff'}, '1000');
-				
-			}else if (stattracker["id"+id].split(',')[3] > hp_current){	
-				$(".parahuman"+id).animate({backgroundColor: '#00ff0c'}, '1000');
-				$(".parahuman"+id).animate({backgroundColor: '#ffffff'}, '1000');
-			}
-			hp_current = stattracker["id"+id].split(',')[3];
-			if (hp_current < 0){
-				hp_current = 0;
-			}
-			if(hp_current > hp_start){
-				hp_current = hp_start;	
-			}
-		
+		//update the "pulse" again
 		lifesigns(id,name,classes.indexOf(thisclass),hp_start,hp_current,power,affiliation);
 		makesave();
 
+		//if hp is 0, kill the parahuman and send a death message. If not, add conflict.
 		if (hp_current == 0){
 		
 			clearInterval(countdown);
 			kill_parahuman(id,Number(power)+(Number(power)*(harvester*.02)),affiliation);
 			news_message("death",name);
-		}
-		if (hp_current == 0){}else{
+		}else{
 			update_conflict(2);
 			collected_conflict += 2;
 		}
+		
+		//bud system, after generating 100 conflict, 5% chance to bud, increasing as conflict rises
 		if (collected_conflict >= 100 && bud == 0){
 			var chance = (100 / collected_conflict)*.05;
 			var d = Math.random();
@@ -285,24 +306,31 @@ function create_parahuman(id,class_check,power,_name,initial_hp,current_hp,_affi
 			
 		}
 		
+		//update the visual hp display
 		$( function() {
     		$( "#progressbar"+id ).progressbar({
       			value: (hp_current/hp_start)*100
     		});
   		} );
 		
+		//update the hp text
 		$( "#timer"+id ).text(hp_current);
+		
+		//shards dropped on death can change depending on the harvester skill, this updates the number visually
 		$( "#sharddeath"+id ).text(dp(Number(power)+(Number(power)*(harvester*.02))));
 		
 	}
 	
 }
 
+//parahuman death function, remove the id from the save, show death image and fade out, add shards from death
 function kill_parahuman(id,gainshards,affiliation){
 	delete stattracker['id'+id];
 	$(".pimage"+id).attr("src","images/dead.jpg");
 	$(".parahuman"+id).animate({backgroundColor: '#000000'}, 5000);
 	update_shards(Number(gainshards));
+	
+	//remove the parahumans id from living parahumans, and the heroes and villains arrays (used in events)
 	living_parahumans.splice( $.inArray(id, living_parahumans), 1 );
 	if (affiliation == "Hero"){
 		heroes.splice( $.inArray(id, heroes), 1 );	
@@ -315,6 +343,7 @@ function kill_parahuman(id,gainshards,affiliation){
 	}, 5000);
 }
 
+//constantly ticking time function, checks for news scrolls, events, and updates shards and conflict depending on skills
 function time(){
 	scroller();
 	event_system();
@@ -329,6 +358,7 @@ function time(){
 	
 }
 
+//randomizes array order, used in events
 function shuffle(a) {
     var j, x, i;
     for (i = a.length; i; i--) {
@@ -340,29 +370,34 @@ function shuffle(a) {
 }
 
 var tick = 0;
+
+//event system, currently set to trigger every 2 seconds
 function event_system(){
 	
 	if (tick == 0){
 		tick = 2;
-			if(living_parahumans.length > 0){
-				var targets = Math.floor((Math.random() * living_parahumans.length));
-					shuffle(living_parahumans);
-					while (targets >= 0){
-						event_trigger(living_parahumans[targets]);
-						targets--;	
-					}
+		//check if there are any living parahumans, if there are, pick one or more of them randomly and make an event happen
+		if(living_parahumans.length > 0){
+			var targets = Math.floor((Math.random() * living_parahumans.length));
+			shuffle(living_parahumans);
+			while (targets >= 0){
+				event_trigger(living_parahumans[targets]);
+				targets--;	
 			}
+		}
 	}
 	tick--;
 }
 
+//decides what type of event you're going to have
 function event_trigger(ids){
 	
-	var pick = Math.floor((Math.random() * 2) + 1);
+	//if there is at least one hero and one villain alive, 1 in 5 chance to battle
 	if(heroes.length > 0 && villains.length > 0 && Math.floor((Math.random() * 5) + 1) == 5){
 		battle_event(ids);
 		 		
 	}else{
+		var pick = Math.floor((Math.random() * 2) + 1);
 		if (pick == 1){
 			good_event(ids);
 		}
@@ -372,6 +407,7 @@ function event_trigger(ids){
 	}
 }
 
+//good event, with a modifier so values are not always static
 function good_event(ids){
 	var base = 5;
 	var plus = Math.floor((Math.random() * 2) + 1);
@@ -381,12 +417,14 @@ function good_event(ids){
 	}else{
 		base = base - modifier;
 	}
+	//update health of the parahumans "pulse", this is where the event system hooks in
 	var new_health = stattracker["id"+ids].split(',')
 	new_health[3] = Number(new_health[3]) + base;
 	stattracker["id"+ids] = new_health.toString();
 	
 }
 
+//bad event, with a modifier so values are not always static
 function bad_event(ids){
 	var base = -20;
 	var plus = Math.floor((Math.random() * 2) + 1);
@@ -396,13 +434,16 @@ function bad_event(ids){
 	}else{
 		base = base - modifier;
 	}
+	//update health of the parahumans "pulse", this is where the event system hooks in
 	var new_health = stattracker["id"+ids].split(',')
 	new_health[3] = Number(new_health[3]) + base;
 	stattracker["id"+ids] = new_health.toString();
 }
 
+
 function battle_event(ids){
 		var base = -20;
+		//check if the id that triggered the event is a hero or villain, then find a random of the opposite faction to battle
 		if (jQuery.inArray( ids, heroes ) != -1){
 			var hero = ids;
 			var villain = villains[Math.floor(Math.random() * villains.length)];
@@ -410,6 +451,7 @@ function battle_event(ids){
 			var villain = ids;	
 			var hero = heroes[Math.floor(Math.random() * heroes.length)];
 		}
+		//update health of the parahumans "pulse", this is where the event system hooks in
 		var id = "id"+hero;
 		hero = stattracker[id].split(',');
 		hero[3] = Number(hero[3]) + base;
@@ -419,12 +461,13 @@ function battle_event(ids){
 		villain[3] = Number(villain[3]) + base;
 		stattracker[id] = villain.toString();
 		
+		//send fighting message
 		var message = hero[0]+" and "+villain[0]+" were seen fighting in the streets.";
 		news_message("fight",null,message);
 
 }
 
-
+//This function is used the first time a parahuman of one type is born, revealing the button to create more of that type. Also used when loading a save
 function check_classes(){
 	for (var i = 0; i < class_created.length; i++) {
     	if (class_created[i] == 1){
@@ -476,62 +519,64 @@ function gardener_skill(){
 	}
 }
 
-
+//function to capitalize, used for the random names in certain cases
 String.prototype.capitalize = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
 }
 
+//rounding function
 function dp(number, places){
 	places = places || 0;
 	return Math.floor(number*Math.pow(10,places))/Math.pow(10,places);
 }
 
+//name generator, based on Shemetz Java code.
 function name_generate() {
 	var namechance = [4, 4, 4, 4, 3, 4, 4, 2, 2, 2, 4, 4, 5, 10, 6, 9, 5, 9, 4, 5, 4, 6, 5, 3, 3, 3, 5, 5, 4, 4, 5, 11]; 
 	var name;
-		switch(namechance[Math.floor(Math.random() * namechance.length)]) {
-    		case 6:
-        		name = nouns[Math.floor(Math.random() * nouns.length)].capitalize() + " " + nouns[Math.floor(Math.random() * nouns.length)].capitalize();
-				return name;
-        		break;
-    		case 5:
-        		name = nouns[Math.floor(Math.random() * nouns.length)].capitalize() + nouns[Math.floor(Math.random() * nouns.length)];
-				return name;
-        		break;
-			case 2:
-        		name = "The "+nouns[Math.floor(Math.random() * nouns.length)].capitalize();
-				return name;
-        		break;
-			case 3:
-        		name = pretitles[Math.floor(Math.random() * pretitles.length)] + " " + nouns[Math.floor(Math.random() * nouns.length)].capitalize();
-				return name;
-        		break;
-			case 4:
-        		name = "The "+nouns[Math.floor(Math.random() * nouns.length)].capitalize() + " " + posttitles[Math.floor(Math.random() * posttitles.length)].capitalize();
-				return name;
-        		break;
-			case 8:
-        		name = verbs[Math.floor(Math.random() * verbs.length)].capitalize() + nouns[Math.floor(Math.random() * nouns.length)];
-				return name;
-        		break;
-			case 9:
-        		name = adjectives[Math.floor(Math.random() * adjectives.length)].capitalize() + nouns[Math.floor(Math.random() * nouns.length)];
-				return name;
-        		break;
-			case 10:
-        		name = adjectives[Math.floor(Math.random() * adjectives.length)].capitalize() + " " + posttitles[Math.floor(Math.random() * posttitles.length)];
-				return name;
-        		break;
-			case 11:
-        		name = nouns[Math.floor(Math.random() * nouns.length)].capitalize() + " the " + adjectives[Math.floor(Math.random() * adjectives.length)].capitalize();
-				return name;
-        		break;
-			
-		}
+	
+	switch(namechance[Math.floor(Math.random() * namechance.length)]) {
+   		case 6:
+       		name = nouns[Math.floor(Math.random() * nouns.length)].capitalize() + " " + nouns[Math.floor(Math.random() * nouns.length)].capitalize();
+			return name;
+       		break;
+    	case 5:
+       		name = nouns[Math.floor(Math.random() * nouns.length)].capitalize() + nouns[Math.floor(Math.random() * nouns.length)];
+			return name;
+        	break;
+		case 2:
+       		name = "The "+nouns[Math.floor(Math.random() * nouns.length)].capitalize();
+			return name;
+       		break;
+		case 3:
+       		name = pretitles[Math.floor(Math.random() * pretitles.length)] + " " + nouns[Math.floor(Math.random() * nouns.length)].capitalize();
+			return name;
+       		break;
+		case 4:
+       		name = "The "+nouns[Math.floor(Math.random() * nouns.length)].capitalize() + " " + posttitles[Math.floor(Math.random() * posttitles.length)].capitalize();
+			return name;
+       		break;
+		case 8:
+       		name = verbs[Math.floor(Math.random() * verbs.length)].capitalize() + nouns[Math.floor(Math.random() * nouns.length)];
+			return name;
+       		break;
+		case 9:
+       		name = adjectives[Math.floor(Math.random() * adjectives.length)].capitalize() + nouns[Math.floor(Math.random() * nouns.length)];
+			return name;
+       		break;
+		case 10:
+       		name = adjectives[Math.floor(Math.random() * adjectives.length)].capitalize() + " " + posttitles[Math.floor(Math.random() * posttitles.length)];
+			return name;
+       		break;
+		case 11:
+       		name = nouns[Math.floor(Math.random() * nouns.length)].capitalize() + " the " + adjectives[Math.floor(Math.random() * adjectives.length)].capitalize();
+			return name;
+       		break;		
+	}
 }
 
 
-	
+//news message parser	
 function news_message(type,name,_message){
 	if (type == "cape"){
 		var message = "A new cape was seen in "+cities[Math.floor(Math.random() * cities.length)]+" today, calling themselves " + name+".";	
@@ -544,18 +589,25 @@ function news_message(type,name,_message){
 	if (type == "fight" && jQuery.inArray( _message, news ) == -1){
 		var message = _message;	
 	}
+	//add the message to the news array
 	if(message){
 		news.push(message);
 	}
 }
 
+//constantly ticking, waiting for news entries
 function scroller(){
+	//live variable keeps multiple news stories from being generated on top of each other
 	if(news.length > 0 && live == 0){
 		live = 1;
+		//add first news story in array to html
 		$( "#newsScroller" ).append("<li class='one' style='position: relative; list-style: none'>"+news[0]+"</li>");
 	
+		//set width based on the content of the message
 		var width = $("#newsScroller .one").width();
 		var total_width = width+$("#mainGame").width();
+		
+		//scroll the message the width of the container
 		$("#newsScroller .one").css("right", -Math.abs(width));
 		$("#newsScroller .one").animate({ 
     		right: "+="+total_width,
@@ -573,7 +625,8 @@ function makesave(){
 		return null;
 	}
 	var savestring=[];
-	//shards,conflict,class_created,warrior,harvester,gardener
+
+	// get each of the currently alive parahumans and add their saved variables
 	for (var key in stattracker) {
        var arr = stattracker[key];
 	   if (stattracker_convert){
@@ -603,7 +656,7 @@ function toggleAutosave(){
 function importsave(){
 	
 	if (localStorage.getItem("save") !== null) {
-
+		//start retrieving all of the saved variables from the string
 		var stringval = localStorage.getItem("save");
 		var stringval = stringval.split(',');
 		shards = Number(stringval[0]);
@@ -614,7 +667,8 @@ function importsave(){
 		harvester = Number(stringval[15]);
 		gardener = Number(stringval[16]);
 		num_people = Number(stringval[17]);
-		//console.log(stringval[18]);
+		
+		//for each parahuman in the save, create a brand new parahuman with those stats (basically a clone)
 		while (num_people > 0) {
     		//var id = stringval[18].replace("id", "");
 			var name = stringval[19];
@@ -632,6 +686,7 @@ function importsave(){
 	}
 }
 
+//this function takes the lifesigns "pulse" and pushes it into an object for the save system
 function lifesigns(id,name,hclass,initial_hp,current_hp,power,affiliation){
 	stattracker["id"+id] = name+","+hclass+","+initial_hp+","+current_hp+","+power+","+affiliation;
 }
