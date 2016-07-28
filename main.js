@@ -1,4 +1,4 @@
-var shards = 0;
+var shards = 300;
 var conflict = 0;
 var parahumans = 0;
 var living_parahumans = [];
@@ -329,6 +329,17 @@ function time(){
 	}
 	
 }
+
+function shuffle(a) {
+    var j, x, i;
+    for (i = a.length; i; i--) {
+        j = Math.floor(Math.random() * i);
+        x = a[i - 1];
+        a[i - 1] = a[j];
+        a[j] = x;
+    }
+}
+
 var tick = 0;
 var events = 0;
 function event_system(){
@@ -339,8 +350,14 @@ function event_system(){
 		tick = 2;
 		events = 1;
 		if(living_parahumans.length > 0){
-			var targets = living_parahumans[Math.floor((Math.random() * living_parahumans.length))];
-			event_trigger(targets);
+			var targets = Math.floor((Math.random() * living_parahumans.length));
+			console.log(targets);
+				shuffle(living_parahumans);
+				while (targets > 0){
+					event_trigger(living_parahumans[targets]);
+					targets--;	
+				}
+			
 		}
 		
 	}
