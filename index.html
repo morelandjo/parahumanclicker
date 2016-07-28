@@ -8,6 +8,9 @@
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+<!-- Add fancyBox -->
+<link rel="stylesheet" href="fancybox/source/jquery.fancybox.css?v=2.1.5" type="text/css" media="screen" />
+<script type="text/javascript" src="fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
 <link rel="stylesheet" href="style/style.css">
 <!-- Thank you to Shemetz for providing name generation code used as a starting point -->
 <script src="names.js"></script>
@@ -18,6 +21,7 @@
 
 <body>
 	<div id="mainGame">
+     <a class="fancybox" href="#settings"><i class="fa fa-cog fa-2x" aria-hidden="true"></i></a>
     	<h1 class="title">Parahuman Clicker</h1>
         
         <ul id="newsScroller">
@@ -28,10 +32,7 @@
             <img class="shard_container" src="images/shard.png" />
         </div>
 		
-		<div class="settingsPanel">
-			<div id="deleteSave">Delete Save</div>
-			<div id="toggleAutosave">Turn off autosave</div>
-		</div>
+		
 		
         <div class="createParahumansPanel">
         	<h3>Conflict: <span class="num_conflict"></span></h3>
@@ -86,5 +87,13 @@
     </div>
       
       <a href="javascript:void(0);" class="slider-arrow show">Skills &raquo;</a>
+      
+      <div id="settings">
+      	<h1>Settings</h1>
+        <div class="settingsPanel">
+			<div id="deleteSave">Delete Save</div>
+			<div id="toggleAutosave">Turn off autosave</div>
+		</div>
+     </div>
 </body>
 </html>

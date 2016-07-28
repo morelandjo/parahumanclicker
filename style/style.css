@@ -147,3 +147,17 @@
 	border-radius: 6px;
 	cursor:pointer;
 }
+#settings{
+	display:none;
+	width:360px;
+	height:250px;	
+}
+#settings h1{
+	text-align:center;
+}
+#deleteSave{
+	margin-bottom:10px;	
+}
+.fancybox{
+	color: #000;	
+}

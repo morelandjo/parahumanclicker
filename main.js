@@ -17,6 +17,8 @@ var isAutosaving = true;
 
 $( document ).ready(function() {
 	
+	$(".fancybox").fancybox();
+	
 	$( ".shard_container" ).click(function() {
 		update_shards(1)
 	});
