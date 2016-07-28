@@ -33,6 +33,11 @@
 	cursor: pointer;
 	margin-left: 25%;
 }
+
+.settingsPanel{
+	cursor:pointer;
+}
+
 #mainGame{
 	width: 600px;
 	margin:0 auto;
