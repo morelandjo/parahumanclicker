@@ -405,8 +405,15 @@ function bad_event(ids){
 function battle_event(ids){
 		var base = -20;
 		//console.log("heroes: "+heroes+" villains: "+villains);
-		var hero = heroes[Math.floor(Math.random() * heroes.length)];
-		var villain = villains[Math.floor(Math.random() * villains.length)];
+		if (jQuery.inArray( ids, heroes ) != -1){
+			var hero = ids;
+			var villain = villains[Math.floor(Math.random() * villains.length)];
+		}else{
+			var villain = ids;	
+			var hero = heroes[Math.floor(Math.random() * heroes.length)];
+		}
+		//var hero = heroes[Math.floor(Math.random() * heroes.length)];
+		//var villain = villains[Math.floor(Math.random() * villains.length)];
 		//console.log("heroes: "+heroes+" villains: "+villains);
 		var id = "id"+hero;
 		hero = stattracker[id].split(',');
