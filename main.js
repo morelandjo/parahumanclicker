@@ -60,18 +60,16 @@ $( document ).ready(function() {
     })
   	.mousedown(function() {
     	
-			cost = $(this).find(".cost").text();
-    		var element = $(this).find(".cost");
-	timeout = window.setTimeout(function () {
+		cost = $(this).find(".cost").text();
+    	var element = $(this).find(".cost");
+		timeout = window.setTimeout(function () {
 			timeout = setInterval(function(){
         		if (cost < shards){
         			cost++
         			$(element).text(cost)
         		}
     		}, 100);
-	}, 400);
-		
-	
+		}, 400);
   	});
 
   	$(document).mouseup(function(){
@@ -99,7 +97,6 @@ $( document ).ready(function() {
 				$(this).html('Skills &raquo;').removeClass('hide').addClass('show');    
         	}
    		 });
-
 	});
 
 	$( "#warrior" ).tooltip({
@@ -231,8 +228,8 @@ function create_parahuman(id,class_check,power,_name,initial_hp,current_hp,_affi
 	thisclass = classes[thisclass];
 	check_classes();
 	
-	var initial_timer = initial_hp || 100;
-	var timer = current_hp || 100;
+	var hp_start = initial_hp || 100;
+	var hp_current = current_hp || 100;
 	var cd = 0;
 	if (_name){
 		var name = _name;
@@ -241,41 +238,41 @@ function create_parahuman(id,class_check,power,_name,initial_hp,current_hp,_affi
 		news_message("cape",name);
 	}
 	
-	lifesigns(id,name,classes.indexOf(thisclass),initial_timer,timer,power,affiliation);
+	lifesigns(id,name,classes.indexOf(thisclass),hp_start,hp_current,power,affiliation);
 	makesave();
 	
-	$( "#parahuman_container" ).append( '<div id="parahuman" class="parahuman'+id+'"><div id="protrait"><img class="pimage'+id+'" src="images/face1.png" /></div><div id="stats"><p>Name: '+name+'<br>Power level: '+dp(power)+'<br>Type: '+thisclass+'<br>Conflict per second: 2<br>Shards upon death: <span id="sharddeath'+id+'"></span><br>Affiliation: '+affiliation+'</p></div><div id="life"><p>HP: <span id="timer'+id+'">'+timer+'</span><div id="progressbar'+id+'""></div></p></div></div>' );
+	$( "#parahuman_container" ).append( '<div id="parahuman" class="parahuman'+id+'"><div id="protrait"><img class="pimage'+id+'" src="images/face1.png" /></div><div id="stats"><p>Name: '+name+'<br>Power level: '+dp(power)+'<br>Type: '+thisclass+'<br>Conflict per second: 2<br>Shards upon death: <span id="sharddeath'+id+'"></span><br>Affiliation: '+affiliation+'</p></div><div id="life"><p>HP: <span id="timer'+id+'">'+hp_current+'</span><div id="progressbar'+id+'""></div></p></div></div>' );
 	var countdown = setInterval(frame, 1000);
 	function frame() {
 		//console.log("tick "+events+" "+id+" "+targets+" "+cd+" "+living_parahumans);
 		
 		
-			if (stattracker["id"+id].split(',')[3] < timer){	
+			if (stattracker["id"+id].split(',')[3] < hp_current){	
 				$(".parahuman"+id).animate({backgroundColor: '#ff0000'}, '1000');
 				$(".parahuman"+id).animate({backgroundColor: '#ffffff'}, '1000');
 				
-			}else if (stattracker["id"+id].split(',')[3] > timer){	
+			}else if (stattracker["id"+id].split(',')[3] > hp_current){	
 				$(".parahuman"+id).animate({backgroundColor: '#00ff0c'}, '1000');
 				$(".parahuman"+id).animate({backgroundColor: '#ffffff'}, '1000');
 			}
-			timer = stattracker["id"+id].split(',')[3];
-			if (timer < 0){
-				timer = 0;
+			hp_current = stattracker["id"+id].split(',')[3];
+			if (hp_current < 0){
+				hp_current = 0;
 			}
-			if(timer > initial_timer){
-				timer = initial_timer;	
+			if(hp_current > hp_start){
+				hp_current = hp_start;	
 			}
 		
-		lifesigns(id,name,classes.indexOf(thisclass),initial_timer,timer,power,affiliation);
+		lifesigns(id,name,classes.indexOf(thisclass),hp_start,hp_current,power,affiliation);
 		makesave();
 
-		if (timer == 0){
+		if (hp_current == 0){
 		
 			clearInterval(countdown);
 			kill_parahuman(id,Number(power)+(Number(power)*(harvester*.02)),affiliation);
 			news_message("death",name);
 		}
-		if (timer == 0){}else{
+		if (hp_current == 0){}else{
 			update_conflict(2);
 			collected_conflict += 2;
 		}
@@ -291,11 +288,11 @@ function create_parahuman(id,class_check,power,_name,initial_hp,current_hp,_affi
 		
 		$( function() {
     		$( "#progressbar"+id ).progressbar({
-      			value: (timer/initial_timer)*100
+      			value: (hp_current/hp_start)*100
     		});
   		} );
 		
-		$( "#timer"+id ).text(timer);
+		$( "#timer"+id ).text(hp_current);
 		$( "#sharddeath"+id ).text(dp(Number(power)+(Number(power)*(harvester*.02))));
 		
 	}
