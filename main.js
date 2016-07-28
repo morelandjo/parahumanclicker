@@ -238,34 +238,32 @@ function create_parahuman(id,class_check,power,_name,initial_hp,current_hp,_affi
 		var name = name_generate();
 		news_message("cape",name);
 	}
+	
+	lifesigns(id,name,classes.indexOf(thisclass),initial_timer,timer,power,affiliation);
+	makesave();
+	
 	$( "#parahuman_container" ).append( '<div id="parahuman" class="parahuman'+id+'"><div id="protrait"><img class="pimage'+id+'" src="images/face1.png" /></div><div id="stats"><p>Name: '+name+'<br>Power level: '+dp(power)+'<br>Type: '+thisclass+'<br>Conflict per second: 2<br>Shards upon death: <span id="sharddeath'+id+'"></span><br>Affiliation: '+affiliation+'</p></div><div id="life"><p>HP: <span id="timer'+id+'">'+timer+'</span><div id="progressbar'+id+'""></div></p></div></div>' );
 	var countdown = setInterval(frame, 1000);
 	function frame() {
 		//console.log("tick "+events+" "+id+" "+targets+" "+cd+" "+living_parahumans);
-		if(events == 1 && id == targets && cd == 0){
-			//do something eventful
-			
-			var figure = event_trigger();
-			if (figure + timer < 0){
-				timer = 0;	
-			}else if (figure+timer > initial_timer) {
-					timer = initial_timer;
-					
-			}else{
-				timer = figure + timer;		
-			}
-			if (figure < 0){
+		
+		
+			if (stattracker["id"+id].split(',')[3] < timer){	
 				$(".parahuman"+id).animate({backgroundColor: '#ff0000'}, '1000');
 				$(".parahuman"+id).animate({backgroundColor: '#ffffff'}, '1000');
-			}else if (figure > 0 && figure+timer < initial_timer){
+				
+			}else if (stattracker["id"+id].split(',')[3] > timer){	
 				$(".parahuman"+id).animate({backgroundColor: '#00ff0c'}, '1000');
 				$(".parahuman"+id).animate({backgroundColor: '#ffffff'}, '1000');
 			}
-			cd = 1;
-		}
-		if(cd==1 && events==0){
-			cd = 0;
-		}
+			timer = stattracker["id"+id].split(',')[3];
+			if (timer < 0){
+				timer = 0;
+			}
+			if(timer > initial_timer){
+				timer = initial_timer;	
+			}
+		
 		lifesigns(id,name,classes.indexOf(thisclass),initial_timer,timer,power,affiliation);
 		makesave();
 
@@ -306,9 +304,6 @@ function kill_parahuman(id,gainshards,affiliation){
 	delete stattracker['id'+id];
 	$(".pimage"+id).attr("src","images/dead.jpg");
 	$(".parahuman"+id).animate({backgroundColor: '#000000'}, 5000);
-	timeout = window.setTimeout(function () {
-		$( ".parahuman"+id ).remove();
-	}, 5000);
 	update_shards(Number(gainshards));
 	living_parahumans.splice( $.inArray(id, living_parahumans), 1 );
 	if (affiliation == "Hero"){
@@ -317,7 +312,9 @@ function kill_parahuman(id,gainshards,affiliation){
 		villains.splice( $.inArray(id, villains), 1 );		
 	}
 	makesave();
-	
+	timeout = window.setTimeout(function () {
+		$( ".parahuman"+id ).remove();
+	}, 5000);
 }
 
 function time(){
@@ -335,15 +332,18 @@ function time(){
 }
 var tick = 0;
 var events = 0;
-var targets = 0;
 function event_system(){
+	
 	//var roll = Math.floor((Math.random() * 2) + 1);
 	//if (roll == 1 && tick == 0){
-		if (tick == 0){
+	if (tick == 0){
 		tick = 2;
 		events = 1;
-		targets = living_parahumans[Math.floor((Math.random() * living_parahumans.length))];
-
+		if(living_parahumans.length > 0){
+			var targets = living_parahumans[Math.floor((Math.random() * living_parahumans.length))];
+			event_trigger(targets);
+		}
+		
 	}
 	if (tick > 0){
 		tick--;
@@ -353,6 +353,76 @@ function event_system(){
 	}
 
 }
+
+function event_trigger(ids){
+	
+	var pick = Math.floor((Math.random() * 2) + 1);
+	//console.log(heroes);
+	//console.log(villains);
+	if(heroes.length > 0 && villains.length > 0 && Math.floor((Math.random() * 5) + 1) == 5){
+		console.log("battle");
+		battle_event(ids);
+		 		
+	}else{
+		if (pick == 1){
+			good_event(ids);
+		}
+		if (pick == 2){
+			bad_event(ids);
+		}
+	}
+}
+
+function good_event(ids){
+	var base = 5;
+	var plus = Math.floor((Math.random() * 2) + 1);
+	var modifier = Math.floor((Math.random() * 10) + 1);
+	if (plus == 1){
+		base = base + modifier;	
+	}else{
+		base = base - modifier;
+	}
+	var new_health = stattracker["id"+ids].split(',')
+	new_health[3] = Number(new_health[3]) + base;
+	stattracker["id"+ids] = new_health.toString();
+	
+}
+
+function bad_event(ids){
+	var base = -20;
+	var plus = Math.floor((Math.random() * 2) + 1);
+	var modifier = Math.floor((Math.random() * 5) + 1);
+	if (plus == 1){
+		base = base + modifier;	
+	}else{
+		base = base - modifier;
+	}
+	var new_health = stattracker["id"+ids].split(',')
+	new_health[3] = Number(new_health[3]) + base;
+	stattracker["id"+ids] = new_health.toString();
+}
+
+function battle_event(ids){
+		var base = -20;
+		//console.log("heroes: "+heroes+" villains: "+villains);
+		var hero = heroes[Math.floor(Math.random() * heroes.length)];
+		var villain = villains[Math.floor(Math.random() * villains.length)];
+		//console.log("heroes: "+heroes+" villains: "+villains);
+		var id = "id"+hero;
+		hero = stattracker[id].split(',');
+		hero[3] = Number(hero[3]) + base;
+		stattracker[id] = hero.toString();
+		//console.log("heroes: "+heroes+" villains: "+villains);
+		id = "id"+villain;
+		villain = stattracker["id"+villain].split(',');
+		villain[3] = Number(villain[3]) + base;
+		stattracker[id] = villain.toString();
+		
+		var message = hero[0]+" and "+villain[0]+" were seen fighting in the streets.";
+		news_message("fight",null,message);
+
+}
+
 
 function check_classes(){
 	for (var i = 0; i < class_created.length; i++) {
@@ -459,63 +529,6 @@ function name_generate() {
 		}
 }
 
-function event_trigger(){
-	
-	var pick = Math.floor((Math.random() * 2) + 1);
-	console.log(heroes);
-	console.log(villains);
-	if(heroes.length > 0 && villains.length > 0 && Math.floor((Math.random() * 5) + 1) == 5){
-		return battle_event();	
-		
-	}else{
-	
-		if (pick == 1){
-			return good_event();
-		}
-		if (pick == 2){
-			return bad_event();
-		}
-	}
-}
-
-function good_event(){
-	var base = 5;
-	var plus = Math.floor((Math.random() * 2) + 1);
-	var modifier = Math.floor((Math.random() * 10) + 1);
-	if (plus == 1){
-		base = base + modifier;	
-	}else{
-		base = base - modifier;
-	}
-	return base;
-	
-}
-
-function bad_event(){
-	var base = -20;
-	var plus = Math.floor((Math.random() * 2) + 1);
-	var modifier = Math.floor((Math.random() * 5) + 1);
-	if (plus == 1){
-		base = base + modifier;	
-	}else{
-		base = base - modifier;
-	}
-	return base;
-	
-}
-
-function battle_event(){
-		var base = -20;
-		var hero = heroes[Math.floor(Math.random() * heroes.length)];
-		var villain = villains[Math.floor(Math.random() * villains.length)];
-		var id = "id"+hero;
-		hero = stattracker[id].split(',');
-		id = "id"+villain;
-		villain = stattracker["id"+villain].split(',');
-		var message = hero[0]+" and "+villain[0]+" were seen fighting in the streets.";
-		news_message("fight",null,message);
-		return base;
-}
 
 	
 function news_message(type,name,_message){
@@ -527,11 +540,13 @@ function news_message(type,name,_message){
 		var message = name+" has died.";	
 	}
 	
-	if (type == "fight"){
-		var message = _message	
+	if (type == "fight" && jQuery.inArray( _message, news ) == -1){
+		console.log(_message);
+		var message = _message;	
 	}
-	
-	news.push(message);
+	if(message){
+		news.push(message);
+	}
 }
 
 function scroller(){
