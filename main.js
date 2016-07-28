@@ -13,6 +13,7 @@ var live = 0;
 var stattracker = [];
 var heroes = [];
 var villains = [];
+var isAutosaving = true;
 
 $( document ).ready(function() {
 	
@@ -30,6 +31,14 @@ $( document ).ready(function() {
 	
 	$( "#gardener .levelUpSkill" ).click(function() {
 		gardener_skill()
+	});
+	
+	$( "#deleteSave").click(function(){
+		deleteSave()
+	});
+	
+	$( "#toggleAutosave").click(function(){
+		toggleAutosave()
 	});
 	
 	
@@ -132,9 +141,8 @@ $( document ).ready(function() {
 
 
 function update_shards(change){
-	change = change || 0;
-	shards += change;
-	$('.num_shards').text(shards);
+	shards += (change || 0);
+	$('.num_shards').text(dp(shards));
 	update_spawn();	
 	makesave();
 }
@@ -187,7 +195,7 @@ function check_skills(){
 	$("#gardener_lvl").text(gardener);
 	$( ".createParahuman .cost" ).each(function( index ) {
 		var new_value = Number($(this).text())-(Number($(this).text())*(gardener*.01));
-		$(this).text(new_value);
+		$(this).text(dp(new_value));
 	});
 	$("#harvester_lvl").text(harvester);
 	$("#warrior_lvl").text(warrior);
@@ -220,16 +228,9 @@ function create_parahuman(id,class_check,power,_name,initial_hp,current_hp,_affi
 	class_created[thisclass] = 1;
 	thisclass = classes[thisclass];
 	check_classes();
-	if(initial_hp){
-		initial_timer = initial_hp;
-	}else{
-		var initial_timer = 100;
-	}
-	if(current_hp){
-		var timer = current_hp;
-	}else{
-		var timer = 100;	
-	}
+	
+	var initial_timer = initial_hp || 100;
+	var timer = current_hp || 100;
 	var cd = 0;
 	if (_name){
 		var name = _name;
@@ -237,7 +238,7 @@ function create_parahuman(id,class_check,power,_name,initial_hp,current_hp,_affi
 		var name = name_generate();
 		news_message("cape",name);
 	}
-	$( "#parahuman_container" ).append( '<div id="parahuman" class="parahuman'+id+'"><div id="protrait"><img class="pimage'+id+'" src="images/face1.png" /></div><div id="stats"><p>Name: '+name+'<br>Power level: '+power+'<br>Type: '+thisclass+'<br>Conflict per second: 2<br>Shards upon death: <span id="sharddeath'+id+'"></span><br>Affiliation: '+affiliation+'</p></div><div id="life"><p>HP: <span id="timer'+id+'">'+timer+'</span><div id="progressbar'+id+'""></div></p></div></div>' );
+	$( "#parahuman_container" ).append( '<div id="parahuman" class="parahuman'+id+'"><div id="protrait"><img class="pimage'+id+'" src="images/face1.png" /></div><div id="stats"><p>Name: '+name+'<br>Power level: '+dp(power)+'<br>Type: '+thisclass+'<br>Conflict per second: 2<br>Shards upon death: <span id="sharddeath'+id+'"></span><br>Affiliation: '+affiliation+'</p></div><div id="life"><p>HP: <span id="timer'+id+'">'+timer+'</span><div id="progressbar'+id+'""></div></p></div></div>' );
 	var countdown = setInterval(frame, 1000);
 	function frame() {
 		//console.log("tick "+events+" "+id+" "+targets+" "+cd+" "+living_parahumans);
@@ -295,7 +296,7 @@ function create_parahuman(id,class_check,power,_name,initial_hp,current_hp,_affi
   		} );
 		
 		$( "#timer"+id ).text(timer);
-		$( "#sharddeath"+id ).text(Number(power)+(Number(power)*(harvester*.02)));
+		$( "#sharddeath"+id ).text(dp(Number(power)+(Number(power)*(harvester*.02))));
 		
 	}
 	
@@ -393,7 +394,7 @@ function gardener_skill(){
 		gardener++;
 		$( ".createParahuman .cost" ).each(function( index ) {
 			var new_value = Number($(this).text())-(Number($(this).text())*(gardener*.01));
-			$(this).text(new_value);
+			$(this).text(dp(new_value));
 		});
 		$( "#gardener_lvl" ).text( gardener );
 		$('#gardener .levelUpSkill').tooltip("destroy");
@@ -407,6 +408,11 @@ function gardener_skill(){
 
 String.prototype.capitalize = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
+}
+
+function dp(number, places){
+	places = places || 0;
+	return Math.floor(number*Math.pow(10,places))/Math.pow(10,places);
 }
 
 function name_generate() {
@@ -547,6 +553,10 @@ function scroller(){
 }
 
 function makesave(){
+	/* Early exit if we have autosave turned off */
+	if (!isAutosaving){
+		return null;
+	}
 	var savestring=[];
 	//shards,conflict,class_created,warrior,harvester,gardener
 	for (var key in stattracker) {
@@ -561,6 +571,19 @@ function makesave(){
 	localStorage.setItem("save", savestring);
 }
 
+function deleteSave(){
+	localStorage.removeItem("save");
+}
+
+function toggleAutosave(){
+	if (isAutosaving){
+		$("#toggleAutosave").text("Turn on autosave");
+		isAutosaving = false;
+	} else {
+		$("#toggleAutosave").text("Turn off autosave");
+		isAutosaving = true;
+	}
+}
 
 function importsave(){
 	
