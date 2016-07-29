@@ -240,6 +240,7 @@ function createParahuman(index, _class, _power, _name, _startHp, _currentHp, _af
 
 function alterParahumanHealth(id,amount){
 	parahumanList[id].currentHp += amount;
+	$("#timer" + parahumanList[id].id).text(parahumanList[id].currentHp);
 	if (amount < 0){
 		/* Flash red */
 		$(".parahuman"+parahumanList[id].id).animate({backgroundColor: '#ff0000'}, '1000');
@@ -275,7 +276,6 @@ function updateParahumans(){
 					parahumanList[q].canBud = false;
 				}
 			}
-			$("#timer" + parahumanList[q].id).text(parahumanList[q].currentHp);
 			$("#sharddeath" + parahumanList[q].id).text(dp(parahumanList[q].power+parahumanList[q].power*(harvester*.02)));
 			
 			//update the visual hp display
@@ -545,7 +545,6 @@ function makesave(){
 		"createdClasses":is_class_created,
 		"parahumans": parahumanList
 	}
-	
 	localStorage.setItem("save", JSON.stringify(saveObject));
 }
 
@@ -568,34 +567,5 @@ function importsave(){
 		{
 			createParahuman(q,tempParahumans[q].class, tempParahumans[q].power, tempParahumans[q].name, tempParahumans[q].initalHp, tempParahumans[q].currentHp, tempParahumans[q].affiliation, true)
 		}
-	
 	}
-}
-
-
-
-//function to capitalize, used for the random names in certain cases
-String.prototype.capitalize = function() {
-    return this.charAt(0).toUpperCase() + this.slice(1);
-}
-
-//rounding function
-function dp(number, places){
-	places = places || 0;
-	return Math.floor(number*Math.pow(10,places))/Math.pow(10,places);
-}
-
-
-Math.chooseRandom = function(items)
-{
-	return items[Math.floor(Math.random()*items.length)]
-}
-
-/* Returns random value between range, (Inclusive of both) */
-Math.randomRange = function(min,max){
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-Math.randomSign = function(){
-	return Math.random() < 0.5 ? -1 : 1;
 }
