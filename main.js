@@ -1,4 +1,4 @@
-var shards = 100000;
+var shards = 0;
 var conflict = 0;
 var classes = ["Mover","Shaker","Brute","Blaster","Breaker","Master","Tinker","Thinker","Striker","Changer","Trump","Stranger"];
 var affiliations = {"true": "Hero", "false":"Villain"}
